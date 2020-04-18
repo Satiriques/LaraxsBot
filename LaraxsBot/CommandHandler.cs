@@ -1,5 +1,8 @@
 ﻿using Discord.Commands;
 using Discord.WebSocket;
+using LaraxsBot.Services;
+using LaraxsBot.Services.Classes;
+using LaraxsBot.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -7,7 +10,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace LaraxBot
+namespace LaraxsBot
 {
     public class CommandHandler
     {
@@ -24,19 +27,25 @@ namespace LaraxBot
             _services = BuildServiceProvider();
         }
 
-        private IServiceProvider BuildServiceProvider() => new ServiceCollection()
-            .AddSingleton(_client)
-            .AddSingleton(_commands)
-            // You can pass in an instance of the desired type
-            // ...or by using the generic method.
-            //
-            // The benefit of using the generic method is that 
-            // ASP.NET DI will attempt to inject the required
-            // dependencies that are specified under the constructor 
-            // for us.
-            .AddSingleton<CommandHandler>()
+        private IServiceProvider BuildServiceProvider()
+        {
+            var config = Config.EnsureExists("config.json");
 
-            .BuildServiceProvider();
+            return new ServiceCollection()
+                        .AddSingleton(_client)
+                        .AddSingleton(_commands)
+                        .AddSingleton(config)
+                        // You can pass in an instance of the desired type
+                        // ...or by using the generic method.
+                        //
+                        // The benefit of using the generic method is that 
+                        // ASP.NET DI will attempt to inject the required
+                        // dependencies that are specified under the constructor 
+                        // for us.
+                        .AddSingleton<CommandHandler>()
+                        .AddTransient<IVoteManagerService, VoteManagerService>()
+                        .BuildServiceProvider();
+        }
 
         public async Task InstallCommandsAsync()
         {
@@ -76,22 +85,10 @@ namespace LaraxBot
 
             // Execute the command with the command context we just
             // created, along with the service provider for precondition checks.
-            IResult result = null;
-
-            if (_magicRegex.IsMatch(message.Content))
-            {
-                var matchResult = _magicRegex.Match(message.Content).Groups[1].Value;
-                var searchResult = _commands.Search("mtg");
-                var command = searchResult.Commands.FirstOrDefault();
-                await command.ExecuteAsync(context, new[] { matchResult }, command.Command.Parameters, _services);
-            }
-            else
-            {
-                result = await _commands.ExecuteAsync(
+            IResult result = await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
                 services: _services);
-            }
 
             if (!result.IsSuccess)
             {
@@ -99,7 +96,6 @@ namespace LaraxBot
             }
             // Keep in mind that result does not indicate a return value
             // rather an object stating if the command executed successfully.
-
 
             // Optionally, we may inform the user if the command fails
             // to be executed; however, this may not always be desired,

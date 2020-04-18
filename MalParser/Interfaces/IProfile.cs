@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LaraxBot.Services
+namespace MalParser.Interfaces
 {
-    public class VoteService : IVoteService
+    interface IProfile
     {
     }
 }

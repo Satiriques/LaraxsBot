@@ -1,10 +1,11 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LaraxBot.Modules
+namespace LaraxsBot.Modules
 {
     public class TestModule : ModuleBase<SocketCommandContext>
     {
@@ -12,6 +13,7 @@ namespace LaraxBot.Modules
         public async Task TestAsync()
         {
             await ReplyAsync("test");
+            var channel = Context.Guild.GetChannel(1) as ITextChannel;
         }
     }
 }

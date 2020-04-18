@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace LaraxBot.Services
+namespace LaraxsBot.Services.Classes
 {
-    public interface IVoteService
+    public class AnimeChannelVote
     {
     }
 }

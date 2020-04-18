@@ -1,11 +1,16 @@
 ﻿using Discord.Commands;
-using System;
-using System.Collections.Generic;
-using System.Text;
+using LaraxsBot.Services;
+using LaraxsBot.Services.Interfaces;
 
-namespace LaraxBot.Modules
+namespace LaraxsBot.Modules
 {
     public class VoteModule : ModuleBase<SocketCommandContext>
     {
+        private readonly IVoteManagerService _service;
+
+        public VoteModule(IVoteManagerService service)
+        {
+            _service = service;
+        }
     }
 }

@@ -5,7 +5,7 @@ using System;
 using System.Threading.Tasks;
 using System.Transactions;
 
-namespace LaraxBot
+namespace LaraxsBot
 {
     class Program
     {
@@ -36,7 +36,6 @@ namespace LaraxBot
             await _client.StartAsync();
 
             await _commandHandler.InstallCommandsAsync();
-
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
