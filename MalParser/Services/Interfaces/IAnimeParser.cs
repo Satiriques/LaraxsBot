@@ -8,6 +8,6 @@ namespace MalParser.Services.Interfaces
 {
     internal interface IAnimeParser
     {
-        Task<IAnime> GetAnimeAsync(ulong id);
+        Task<IAnime?> GetAnimeAsync(ulong id);
     }
 }

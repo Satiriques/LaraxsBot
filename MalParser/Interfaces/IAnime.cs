@@ -15,5 +15,6 @@
         public string Synopsis { get; }
         public string Title { get; }
         public string Type { get; }
+        public string ImageUrl { get; }
     }
 }

@@ -9,10 +9,10 @@ namespace MalParser
     /// <summary>
     /// Stateless mal parser
     /// </summary>
-    public class MalParser
+    public class MalApi
     {
-        private IAnimeParser _animeParser = new AnimeParser();
+        private readonly IAnimeParser _animeParser = new AnimeParser();
 
-        public async Task<IAnime> GetAnimeAsync(ulong id) => await _animeParser.GetAnimeAsync(id).ConfigureAwait(false);
+        public async Task<IAnime?> GetAnimeAsync(ulong id) => await _animeParser.GetAnimeAsync(id).ConfigureAwait(false);
     }
 }

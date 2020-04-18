@@ -1,8 +1,12 @@
-﻿using Discord.Commands;
+﻿using Discord;
+using Discord.Commands;
 using Discord.WebSocket;
+using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Database.Testing.Contexts;
 using LaraxsBot.Services;
 using LaraxsBot.Services.Classes;
 using LaraxsBot.Services.Interfaces;
+using MalParser;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Linq;
@@ -44,6 +48,11 @@ namespace LaraxsBot
                         // for us.
                         .AddSingleton<CommandHandler>()
                         .AddTransient<IVoteManagerService, VoteManagerService>()
+                        .AddTransient<IMessageService, FrenchMessageService>()
+                        .AddTransient<INuitManagerService, NuitManagerService>()
+                        .AddTransient<INuitContext, NuitContext>()
+                        .AddTransient<IEmbedService, EmbedService>()
+                        .AddTransient<MalApi>()
                         .BuildServiceProvider();
         }
 

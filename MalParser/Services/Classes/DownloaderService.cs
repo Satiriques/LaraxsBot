@@ -10,11 +10,19 @@ namespace MalParser.Services.Classes
 {
     internal class DownloaderService : IDownloaderService
     {
-        public async Task<HtmlDocument> GetHtmlDocAsync(string url)
+        public async Task<HtmlDocument?> GetHtmlDocAsync(string url)
         {
             using var client = new HttpClient();
+            string text = string.Empty;
 
-            var text = await client.GetStringAsync(url).ConfigureAwait(false);
+            try
+            {
+                text = await client.GetStringAsync(url).ConfigureAwait(false);
+            }
+            catch
+            {
+                return null;
+            }
 
             var doc = new HtmlDocument();
             doc.LoadHtml(text);

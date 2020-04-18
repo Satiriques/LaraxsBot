@@ -1,4 +1,5 @@
 ﻿using LaraxsBot.Database.Contexts;
+using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
 using System;
@@ -10,9 +11,9 @@ namespace LaraxsBot.Services.Classes
 {
     public class NuitManagerService : INuitManagerService
     {
-        private readonly NuitContext _nuitContext;
+        private readonly INuitContext _nuitContext;
 
-        public NuitManagerService(NuitContext nuitContext)
+        public NuitManagerService(INuitContext nuitContext)
         {
             _nuitContext = nuitContext;
         }
