@@ -1,4 +1,5 @@
-﻿using LaraxsBot.Interfaces;
+﻿using Discord;
+using LaraxsBot.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -10,7 +11,7 @@ namespace LaraxsBot.Services.Interfaces
     {
         Task<IManagerResult> VoteAsync(ulong animeId);
         Task<IManagerResult> UnvoteAsync(IAnimeVote vote);
-        Task<IManagerResult> ProposeAsync(ulong animeId);
+        Task<IManagerResult> ProposeAsync(ulong animeId, IGuildUser user);
         Task<IManagerResult> VoteExistsAsync(ulong animeId);
         Task<IManagerResult> VoteExistsAsync(string animeName);
     }

@@ -41,6 +41,11 @@ namespace LaraxsBot.Modules
                 case "SUGGESTIONS":
                     _suggestionContext.BackupAndDrop();
                     break;
+                case "ALL":
+                    _nuitContext.BackupAndDrop();
+                    _suggestionContext.BackupAndDrop();
+                    _voteContext.BackupAndDrop();
+                    break;
                 default:
                     break;
             }

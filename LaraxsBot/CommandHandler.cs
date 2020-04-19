@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using LaraxsBot.Database.Contexts;
@@ -39,14 +40,9 @@ namespace LaraxsBot
                         .AddSingleton(_client)
                         .AddSingleton(_commands)
                         .AddSingleton<IConfig>(config)
-                        // You can pass in an instance of the desired type
-                        // ...or by using the generic method.
-                        //
-                        // The benefit of using the generic method is that 
-                        // ASP.NET DI will attempt to inject the required
-                        // dependencies that are specified under the constructor 
-                        // for us.
                         .AddSingleton<CommandHandler>()
+                        .AddSingleton<NuitInteractiveService>()
+                        .AddSingleton<InteractiveService>()
                         .AddTransient<IVoteContext, VoteContext>()
                         .AddTransient<IVoteManagerService, VoteManagerService>()
                         .AddTransient<IMessageService, FrenchMessageService>()

@@ -33,13 +33,13 @@ namespace LaraxsBot.Services.Classes
             }.Build();
         }
 
-        public Embed CreateVoteEmbed(IAnime anime, ulong id, IGuildUser user)
+        public Embed CreateVoteEmbed(IAnime anime, ulong animeId, IGuildUser user)
         {
             return new EmbedBuilder()
             {
                 ThumbnailUrl = anime.ImageUrl,
                 Description = anime.Title,
-                Url = $"https://myanimelist.net/anime/{id}",
+                Url = $"https://myanimelist.net/anime/{animeId}",
                 Footer = new EmbedFooterBuilder()
                 {
                     IconUrl = user.GetAvatarUrl(),
