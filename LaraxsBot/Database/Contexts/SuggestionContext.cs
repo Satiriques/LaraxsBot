@@ -1,15 +1,16 @@
 ﻿using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Database.Models;
+using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
-using System.Text;
+using System.IO;
 
 namespace LaraxsBot.Database.Contexts
 {
-    public class SuggestionContext : ISuggestionContext
+    public class SuggestionContext : DbContext, ISuggestionContext
     {
-        public DbSet<> Nuits { get; set; }
+        public DbSet<SuggestionModel> Nuits { get; set; }
 
-        public NuitContext()
+        public SuggestionContext()
         {
             Database.EnsureCreated();
         }
@@ -20,7 +21,7 @@ namespace LaraxsBot.Database.Contexts
             if (!Directory.Exists(baseDir))
                 Directory.CreateDirectory(baseDir);
 
-            string datadir = Path.Combine(baseDir, "nuits.sqlite.db");
+            string datadir = Path.Combine(baseDir, "suggestions.sqlite.db");
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
     }
