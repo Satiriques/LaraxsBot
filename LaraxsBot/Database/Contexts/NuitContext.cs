@@ -51,13 +51,26 @@ namespace LaraxsBot.Database.Contexts
         public async Task<Nuit?> GetStillRunningNuitAsync()
             => await Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
 
-        public async Task StopRunningNuitAsync()
+        public async Task StopNuitAsync()
         {
             var nuit = await Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
             if(nuit != null)
             {
                 nuit.IsRunning = false;
                 await SaveChangesAsync();
+            }
+        }
+
+        public async Task StartNuitAsync(ulong id)
+        {
+            if(!await Nuits.AsQueryable().AnyAsync(x => x.IsRunning))
+            {
+                var nuit = Nuits.AsQueryable().SingleOrDefault(x => x.NuitId == id);
+                if(nuit != null)
+                {
+                    nuit.IsRunning = true;
+                    await SaveChangesAsync();
+                }
             }
         }
     }
