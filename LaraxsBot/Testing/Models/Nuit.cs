@@ -12,5 +12,11 @@ namespace LaraxsBot.Testing.Models
         public bool IsRunning { get; set; }
 
         public DateTime CreationDate { get; set; }
+
+        public ulong CreatorId { get; set; }
+
+        public DateTime StartTime { get; set; }
+
+        public DateTime StopTime { get; set; }
     }
 }
