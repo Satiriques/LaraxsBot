@@ -16,10 +16,10 @@ namespace LaraxsBot.Modules
             _nuitManagerService = nuitManagerService;
         }
 
-        [Command("create")]
-        public async Task CreateNuitAsync()
-        {
-            await _nuitManagerService.CreateNuitAsync();
-        }
+        //[Command("create")]
+        //public async Task CreateNuitAsync()
+        //{
+        //    await _nuitManagerService.CreateNuitAsync();
+        //}
     }
 }

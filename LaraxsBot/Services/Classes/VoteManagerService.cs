@@ -1,28 +1,28 @@
-﻿using LaraxsBot.Database.Contexts;
-using LaraxsBot.Database.Interfaces;
+﻿using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Services.Classes
 {
     public class VoteManagerService : IVoteManagerService
     {
-        private readonly IVoteContext _voteContext;
-        private readonly ISuggestionContext _suggestionContext;
+        private readonly IVoteContext _voteDb;
+        private readonly ISuggestionContext _suggestionDb;
+        private readonly INuitContext _nuitDb;
 
-        public VoteManagerService(IVoteContext voteContext, ISuggestionContext suggestionContext)
+        public VoteManagerService(IVoteContext voteContext, ISuggestionContext suggestionContext, INuitContext nuitContext)
         {
-            _voteContext = voteContext;
-            _suggestionContext = suggestionContext;
+            _voteDb = voteContext;
+            _suggestionDb = suggestionContext;
+            _nuitDb = nuitContext;
         }
 
         public async Task ProposeAsync(ulong animeId)
         {
-            
+            var nuit = await _nuitDb.GetStillRunningNuitAsync();
+            var suggestions = _suggestionDb.GetAllSuggestionsAsync();
         }
 
         public Task UnvoteAsync(IAnimeVote vote)

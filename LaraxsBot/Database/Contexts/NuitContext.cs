@@ -12,7 +12,7 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace LaraxsBot.Database.Contexts
 {
-    public class NuitContext : DbContext
+    public class NuitContext : DbContext, INuitContext
     {
         public DbSet<NuitModel> Nuits { get; set; }
 

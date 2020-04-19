@@ -1,8 +1,8 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
-using LaraxsBot.Database.Testing.Contexts;
 using LaraxsBot.Services;
 using LaraxsBot.Services.Classes;
 using LaraxsBot.Services.Interfaces;

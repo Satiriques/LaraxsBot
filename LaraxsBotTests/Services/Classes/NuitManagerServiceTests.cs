@@ -1,6 +1,7 @@
-﻿using LaraxsBot.Database.Testing.Contexts;
+﻿using LaraxsBot.Database.Contexts;
 using LaraxsBot.Services.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System;
 using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
 
@@ -15,14 +16,14 @@ namespace LaraxsBot.Services.Classes.Tests
         [TestMethod]
         public async Task CreateNuitAsyncTest()
         {
-            await _service.CreateNuitAsync();
-            await _service.CreateNuitAsync();
+            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0);
+            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0);
 
             var count = await _service.GetNumberOfNuitAsync();
             Assert.AreEqual(1, count);
 
             await _service.StopNuitAsync();
-            await _service.CreateNuitAsync();
+            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0);
 
             count = await _service.GetNumberOfNuitAsync();
 

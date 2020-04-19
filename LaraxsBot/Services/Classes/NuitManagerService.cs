@@ -19,13 +19,13 @@ namespace LaraxsBot.Services.Classes
             _nuitContext = nuitContext;
         }
 
-        public async Task CreateNuitAsync()
+        public async Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
         {
             var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
 
             if (currentNuit == null)
             {
-                await _nuitContext.CreateNuitAsync();
+                await _nuitContext.CreateNuitAsync(start, end, creatorId);
             }
         }
 
@@ -42,7 +42,7 @@ namespace LaraxsBot.Services.Classes
 
         public async Task StopNuitAsync()
         {
-            await _nuitContext.StopRunningNuitAsync();
+            await _nuitContext.StopNuitAsync();
         }
     }
 }

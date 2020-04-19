@@ -17,7 +17,7 @@ namespace LaraxsBot.Services.Interfaces
         /// Creates a new nuit, throws if a nuit is already running.
         /// </summary>
         /// <returns></returns>
-        Task CreateNuitAsync();
+        Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId);
         Task<int> GetNumberOfNuitAsync();
         Task StopNuitAsync();
     }

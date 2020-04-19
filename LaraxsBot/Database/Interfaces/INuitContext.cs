@@ -1,4 +1,5 @@
-﻿using LaraxsBot.Interfaces;
+﻿using LaraxsBot.Database.Models;
+using LaraxsBot.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -8,9 +9,10 @@ namespace LaraxsBot.Database.Interfaces
 {
     public interface INuitContext
     {
-        Task CreateNuitAsync();
-        Task<IEnumerable<INuit>> GetAllNuitsAsync();
-        Task<INuit> GetStillRunningNuitAsync();
-        Task StopRunningNuitAsync();
+        Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId);
+        Task<List<NuitModel>> GetAllNuitsAsync();
+        Task<NuitModel?> GetStillRunningNuitAsync();
+        Task StopNuitAsync();
+        Task StartNuitAsync(ulong id);
     }
 }
