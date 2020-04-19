@@ -1,6 +1,7 @@
 ﻿using Discord.Commands;
 using LaraxsBot.Services;
 using LaraxsBot.Services.Interfaces;
+using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
@@ -13,6 +14,14 @@ namespace LaraxsBot.Modules
             _service = service;
         }
 
-
+        [Command("propose")]
+        public async Task ProposeAsync(ulong animeId)
+        {
+            var result = await _service.ProposeAsync(animeId);
+            if (!result.Success)
+            {
+                await ReplyAsync(result.Message);
+            }
+        }
     }
 }

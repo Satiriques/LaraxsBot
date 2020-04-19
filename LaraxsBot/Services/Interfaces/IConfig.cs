@@ -9,6 +9,6 @@ namespace LaraxsBot.Services.Interfaces
     public interface IConfig
     {
         ulong VoteChannelId { get; }
-        ITextChannel VoteChannel { get; }
+        void SetVoteChannelId(ulong id);
     }
 }

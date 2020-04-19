@@ -21,7 +21,7 @@ namespace LaraxsBot.Services.Classes.Tests
         public void TestInitialize()
         {
             _nuitContext = new NuitContext();
-            _service = new NuitManagerService(_nuitContext);
+            _service = new NuitManagerService(_nuitContext, new FrenchMessageService());
         }
 
         [TestCleanup]
@@ -40,7 +40,7 @@ namespace LaraxsBot.Services.Classes.Tests
             var count = await _service.GetNumberOfNuitAsync();
             Assert.AreEqual(2, count);
 
-            await _service.StopNuitAsync();
+            await _service.StopNuitAsync(0);
             await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0);
 
             count = await _service.GetNumberOfNuitAsync();

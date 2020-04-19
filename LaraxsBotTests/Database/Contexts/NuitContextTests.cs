@@ -86,7 +86,7 @@ namespace LaraxsBot.Database.Contexts.Tests
             var nuit = nuits[0];
             Assert.IsTrue(nuit.IsRunning);
 
-            await _context.StopNuitAsync();
+            await _context.StopNuitAsync(0);
 
             nuits = await _context.GetAllNuitsAsync();
             Assert.AreEqual(1, nuits.Count);

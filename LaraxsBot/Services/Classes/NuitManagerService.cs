@@ -1,4 +1,5 @@
-﻿using LaraxsBot.Database.Contexts;
+﻿using LaraxsBot.Common;
+using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
@@ -13,13 +14,16 @@ namespace LaraxsBot.Services.Classes
     public class NuitManagerService : INuitManagerService
     {
         private readonly INuitContext _nuitContext;
+        private readonly IMessageService _msg;
 
-        public NuitManagerService(INuitContext nuitContext)
+        public NuitManagerService(INuitContext nuitContext,
+            IMessageService messageService)
         {
             _nuitContext = nuitContext;
+            _msg = messageService;
         }
 
-        public async Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
+        public async Task<IManagerResult> CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
         {
             var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
 
@@ -27,6 +31,38 @@ namespace LaraxsBot.Services.Classes
             {
                 await _nuitContext.CreateNuitAsync(start, end, creatorId);
             }
+            else
+            {
+                return ManagerResult.FromErrorMessage(_msg.NuitAlreadyRunning);
+            }
+
+            return ManagerResult.Default;
+        }
+
+        public async Task<IManagerResult> StartNuitAsync(ulong nuitId)
+        {
+            var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
+
+            if (currentNuit == null)
+            {
+                var nuits = await _nuitContext.GetAllNuitsAsync();
+                var nuit = nuits.FirstOrDefault(x => x.NuitId == nuitId);
+
+                if(nuit != null)
+                {
+                    await _nuitContext.StartNuitAsync(nuit.NuitId);
+                }
+                else
+                {
+                    return ManagerResult.FromErrorMessage(_msg.GetNoNuitFoundWithId(nuitId));
+                }
+            }
+            else
+            {
+                return ManagerResult.FromErrorMessage(_msg.NuitAlreadyRunning);
+            }
+
+            return ManagerResult.Default;
         }
 
         public async Task<int> GetNumberOfNuitAsync()
@@ -40,9 +76,20 @@ namespace LaraxsBot.Services.Classes
             throw new NotImplementedException();
         }
 
-        public async Task StopNuitAsync()
+        public async Task<IManagerResult> StopNuitAsync(ulong animeId)
         {
-            await _nuitContext.StopNuitAsync();
+            var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
+
+            if(currentNuit != null)
+            {
+                await _nuitContext.StopNuitAsync(animeId);
+            }
+            else
+            {
+                return ManagerResult.FromErrorMessage(_msg.NoRunningNuitFound);
+            }
+
+            return ManagerResult.Default;
         }
     }
 }

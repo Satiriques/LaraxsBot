@@ -38,7 +38,7 @@ namespace LaraxsBot
             return new ServiceCollection()
                         .AddSingleton(_client)
                         .AddSingleton(_commands)
-                        .AddSingleton(config)
+                        .AddSingleton<IConfig>(config)
                         // You can pass in an instance of the desired type
                         // ...or by using the generic method.
                         //
@@ -52,6 +52,7 @@ namespace LaraxsBot
                         .AddTransient<IMessageService, FrenchMessageService>()
                         .AddTransient<INuitManagerService, NuitManagerService>()
                         .AddTransient<INuitContext, NuitContext>()
+                        .AddTransient<ISuggestionContext, SuggestionContext>()
                         .AddTransient<IEmbedService, EmbedService>()
                         .AddTransient<MalApi>()
                         .BuildServiceProvider();

@@ -28,13 +28,29 @@ namespace LaraxsBot.Database.Contexts
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
 
-        public async Task CreateVoteAsync(ulong animeId, ulong discordId, ulong nuitId)
+        public void BackupAndDrop()
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, "data", "votes.sqlite.db");
+
+            if (File.Exists(path))
+            {
+                FileInfo fileInfo = new FileInfo(path);
+
+                var fileName = DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToShortTimeString() + "_" + fileInfo.Name + ".bak";
+                var newPath = Path.Combine(fileInfo.Directory.FullName, fileName);
+
+                File.Copy(path, newPath);
+
+                Database.EnsureDeleted();
+            }
+        }
+
+        public async Task CreateVoteAsync(ulong animeId, ulong nuitId)
         {
             var vote = new AnimeVoteModel()
             {
                 AnimeId = animeId,
                 CreationDate = DateTime.Now,
-                DiscordId = discordId,
                 NuitId = nuitId
             };
 

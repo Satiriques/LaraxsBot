@@ -10,5 +10,6 @@ namespace LaraxsBot.Interfaces
         ulong CreatorId { get; }
         DateTime StartTime { get; }
         DateTime StopTime { get; }
+        ulong WinnerAnimeId { get; }
     }
 }

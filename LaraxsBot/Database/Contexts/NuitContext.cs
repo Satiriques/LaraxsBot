@@ -31,6 +31,23 @@ namespace LaraxsBot.Database.Contexts
             optionsBuilder.UseSqlite($"Filename={datadir}");
         }
 
+        public void BackupAndDrop()
+        {
+            var path = Path.Combine(AppContext.BaseDirectory, "data", "nuits.sqlite.db");
+
+            if (File.Exists(path))
+            {
+                FileInfo fileInfo = new FileInfo(path);
+
+                var fileName = DateTime.Now.ToShortDateString() + "_" + DateTime.Now.ToShortTimeString() + "_" + fileInfo.Name + ".bak";
+                var newPath = Path.Combine(fileInfo.Directory.FullName, fileName);
+
+                File.Copy(path, newPath);
+
+                Database.EnsureDeleted();
+            }
+        }
+
         public async Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
         {
             var nuit = new NuitModel()
@@ -51,12 +68,13 @@ namespace LaraxsBot.Database.Contexts
         public async Task<NuitModel?> GetStillRunningNuitAsync()
             => await Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
 
-        public async Task StopNuitAsync()
+        public async Task StopNuitAsync(ulong animeId)
         {
             var nuit = await Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
             if(nuit != null)
             {
                 nuit.IsRunning = false;
+                nuit.WinnerAnimeId = animeId;
                 await SaveChangesAsync();
             }
         }

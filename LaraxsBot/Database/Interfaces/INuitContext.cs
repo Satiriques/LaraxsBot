@@ -12,7 +12,8 @@ namespace LaraxsBot.Database.Interfaces
         Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId);
         Task<List<NuitModel>> GetAllNuitsAsync();
         Task<NuitModel?> GetStillRunningNuitAsync();
-        Task StopNuitAsync();
+        Task StopNuitAsync(ulong animeId);
         Task StartNuitAsync(ulong id);
+        void BackupAndDrop();
     }
 }

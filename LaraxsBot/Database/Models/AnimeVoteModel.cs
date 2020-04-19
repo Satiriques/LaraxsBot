@@ -12,8 +12,6 @@ namespace LaraxsBot.Database.Models
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong AnimeVoteId { get; set; }
         [Required]
-        public ulong DiscordId { get; set; }
-        [Required]
         public DateTime CreationDate { get; set; }
         [Required]
         public ulong AnimeId { get; set; }

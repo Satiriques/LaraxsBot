@@ -8,10 +8,10 @@ namespace LaraxsBot.Services.Interfaces
 {
     public interface IVoteManagerService
     {
-        Task VoteAsync(ulong animeId);
-        Task UnvoteAsync(IAnimeVote vote);
-        Task ProposeAsync(ulong animeId);
-        Task VoteExistsAsync(ulong animeId);
-        Task VoteExistsAsync(string animeName);
+        Task<IManagerResult> VoteAsync(ulong animeId);
+        Task<IManagerResult> UnvoteAsync(IAnimeVote vote);
+        Task<IManagerResult> ProposeAsync(ulong animeId);
+        Task<IManagerResult> VoteExistsAsync(ulong animeId);
+        Task<IManagerResult> VoteExistsAsync(string animeName);
     }
 }
