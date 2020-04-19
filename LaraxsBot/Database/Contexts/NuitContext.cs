@@ -23,5 +23,10 @@ namespace LaraxsBot.Database.Contexts
         {
             throw new NotImplementedException();
         }
+
+        public Task StopRunningNuitAsync()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

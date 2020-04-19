@@ -7,5 +7,8 @@ namespace LaraxsBot.Interfaces
         ulong NuitId { get; }
         bool IsRunning { get; }
         DateTime CreationDate { get; }
+        ulong CreatorId { get; }
+        DateTime StartTime { get; }
+        DateTime StopTime { get; }
     }
 }

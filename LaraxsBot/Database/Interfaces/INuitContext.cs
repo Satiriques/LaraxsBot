@@ -11,5 +11,6 @@ namespace LaraxsBot.Database.Interfaces
         Task CreateNuitAsync();
         Task<IEnumerable<INuit>> GetAllNuitsAsync();
         Task<INuit> GetStillRunningNuitAsync();
+        Task StopRunningNuitAsync();
     }
 }

@@ -11,9 +11,9 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Database.Testing.Contexts
 {
-    class NuitContext : INuitContext
+    public class NuitContext : INuitContext
     {
-        private List<INuit> _nuits = new List<INuit>();
+        private List<Nuit> _nuits = new List<Nuit>();
 
         public NuitContext()
         {
@@ -28,7 +28,7 @@ namespace LaraxsBot.Database.Testing.Contexts
             };
 
             _nuits.Add(nuit);
-            return null;
+            return Task.CompletedTask;
         }
         public Task<IEnumerable<INuit>> GetAllNuitsAsync()
         {
@@ -36,14 +36,20 @@ namespace LaraxsBot.Database.Testing.Contexts
             return Task.FromResult(nuits);
         }
 
-        public Task<INuit> GetStillRunningNuitAsync()
+        public Task StopRunningNuitAsync()
         {
-            throw new NotImplementedException();
+            var nuit = _nuits.SingleOrDefault(x => x.IsRunning);
+            if (nuit != null)
+            {
+                nuit.IsRunning = false;
+            }
+
+            return Task.CompletedTask;
         }
 
-        private bool IsAnyNuitRunning()
+        public Task<INuit> GetStillRunningNuitAsync()
         {
-            return _nuits.Any(x => x.IsRunning);
+            return Task.FromResult(_nuits.SingleOrDefault(x => x.IsRunning) as INuit);
         }
     }
 }
