@@ -4,6 +4,7 @@ using MoreLinq;
 using NCrunch.Framework;
 using System;
 using System.Diagnostics.CodeAnalysis;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -20,6 +21,7 @@ namespace LaraxsBot.Database.Contexts.Tests
         public void TestCleanup()
         {
             _context.Database.EnsureDeleted();
+            Directory.Delete(Path.Combine(AppContext.BaseDirectory, "data"));
         }
 
         [TestMethod]

@@ -5,7 +5,7 @@ using System.Text;
 
 namespace LaraxsBot.Database.Models
 {
-    public class AnimeVote : IAnimeVote
+    public class AnimeVoteModel : IAnimeVote
     {
 
         public ulong VoteId { get; set; }

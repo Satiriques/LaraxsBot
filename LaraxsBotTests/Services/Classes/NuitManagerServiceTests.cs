@@ -1,16 +1,13 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
-using LaraxsBot.Services.Classes;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using LaraxsBot.Database.Testing.Contexts;
 using LaraxsBot.Services.Interfaces;
-using LaraxsBot.Database.Testing.Contexts;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
+using System.Diagnostics.CodeAnalysis;
 using System.Threading.Tasks;
-using System.Threading;
 
 namespace LaraxsBot.Services.Classes.Tests
 {
     [TestClass]
+    [SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "<Pending>")]
     public class NuitManagerServiceTests
     {
         private readonly INuitManagerService _service = new NuitManagerService(new NuitContext());

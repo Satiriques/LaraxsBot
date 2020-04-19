@@ -14,7 +14,7 @@ namespace LaraxsBot.Database.Contexts
 {
     public class NuitContext : DbContext
     {
-        public DbSet<Nuit> Nuits { get; set; }
+        public DbSet<NuitModel> Nuits { get; set; }
 
         public NuitContext()
         {
@@ -33,7 +33,7 @@ namespace LaraxsBot.Database.Contexts
 
         public async Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
         {
-            var nuit = new Nuit()
+            var nuit = new NuitModel()
             {
                 StartTime = start,
                 StopTime = end,
@@ -45,10 +45,10 @@ namespace LaraxsBot.Database.Contexts
             await SaveChangesAsync();
         }
 
-        public async Task<List<Nuit>> GetAllNuitsAsync()
+        public async Task<List<NuitModel>> GetAllNuitsAsync()
             => await Nuits.AsQueryable().ToListAsync();
 
-        public async Task<Nuit?> GetStillRunningNuitAsync()
+        public async Task<NuitModel?> GetStillRunningNuitAsync()
             => await Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
 
         public async Task StopNuitAsync()
