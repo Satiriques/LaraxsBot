@@ -1,17 +1,28 @@
-﻿using LaraxsBot.Interfaces;
+﻿using LaraxsBot.Database.Contexts;
+using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LaraxsBot
+namespace LaraxsBot.Services.Classes
 {
     public class VoteManagerService : IVoteManagerService
     {
-        public Task ProposeAsync(IAnimeVote vote)
+        private readonly IVoteContext _voteContext;
+        private readonly ISuggestionContext _suggestionContext;
+
+        public VoteManagerService(IVoteContext voteContext, ISuggestionContext suggestionContext)
         {
-            throw new NotImplementedException();
+            _voteContext = voteContext;
+            _suggestionContext = suggestionContext;
+        }
+
+        public async Task ProposeAsync(ulong animeId)
+        {
+            
         }
 
         public Task UnvoteAsync(IAnimeVote vote)
@@ -19,7 +30,7 @@ namespace LaraxsBot
             throw new NotImplementedException();
         }
 
-        public Task VoteAsync(IAnimeVote vote)
+        public Task VoteAsync(ulong animeId)
         {
             throw new NotImplementedException();
         }

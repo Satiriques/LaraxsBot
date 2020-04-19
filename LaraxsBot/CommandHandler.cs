@@ -47,6 +47,7 @@ namespace LaraxsBot
                         // dependencies that are specified under the constructor 
                         // for us.
                         .AddSingleton<CommandHandler>()
+                        .AddTransient<IVoteContext, VoteContext>()
                         .AddTransient<IVoteManagerService, VoteManagerService>()
                         .AddTransient<IMessageService, FrenchMessageService>()
                         .AddTransient<INuitManagerService, NuitManagerService>()

@@ -8,9 +8,9 @@ namespace LaraxsBot.Services.Interfaces
 {
     public interface IVoteManagerService
     {
-        Task VoteAsync(IAnimeVote vote);
+        Task VoteAsync(ulong animeId);
         Task UnvoteAsync(IAnimeVote vote);
-        Task ProposeAsync(IAnimeVote vote);
+        Task ProposeAsync(ulong animeId);
         Task VoteExistsAsync(ulong animeId);
         Task VoteExistsAsync(string animeName);
     }

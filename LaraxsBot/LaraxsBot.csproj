@@ -21,4 +21,8 @@
     <ProjectReference Include="..\MalParser\MalParser.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Paginator\" />
+  </ItemGroup>
+
 </Project>

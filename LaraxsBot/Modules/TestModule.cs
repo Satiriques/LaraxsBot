@@ -51,7 +51,7 @@ namespace LaraxsBot.Modules
 
             if(anime != null)
             {
-                await ReplyAsync(embed: _embedService.CreateVoteEmbed(anime, 52, Context.User as IGuildUser));
+                await ReplyAsync(embed: _embedService.CreateVoteEmbed(anime, 52, (IGuildUser)Context.User));
             }
             else
             {
