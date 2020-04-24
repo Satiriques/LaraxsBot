@@ -73,8 +73,13 @@ namespace LaraxsBot.Services.Classes
             });
         }
 
+        
+
         public async Task<bool> HandleCallbackAsync(SocketReaction reaction)
         {
+            static string FormatMention(ulong userId)
+                => $"<@{userId}>";
+
             var emote = reaction.Emote;
             var user = (SocketGuildUser)reaction.User.Value;
             bool wasMessageRemoved = false;
@@ -88,11 +93,15 @@ namespace LaraxsBot.Services.Classes
                 {
                     if (currentSuggestion != null
                         && !await voteDb.VoteExistsAsync(currentSuggestion.SuggestionModel.AnimeId,
-                                currentSuggestion.SuggestionModel.NuitId))
+                                currentSuggestion.SuggestionModel.NuitId, user.Id))
                     {
                         await voteDb.CreateVoteAsync(currentSuggestion.SuggestionModel.AnimeId,
                             currentSuggestion.SuggestionModel.NuitId,
                             user.Id);
+
+                        var votes = await voteDb.GetVotesAsync(currentSuggestion.SuggestionModel.NuitId, currentSuggestion.SuggestionModel.AnimeId);
+
+                        await Message.ModifyAsync(x => x.Content = string.Join(" ", votes.Select(x => FormatMention(x.UserId))));
                     }
                 }
 
@@ -113,6 +122,15 @@ namespace LaraxsBot.Services.Classes
                         if (vote != null)
                         {
                             await voteDb.DeleteVoteAsync(vote);
+
+                            var votes = await voteDb.GetVotesAsync(currentSuggestion.SuggestionModel.NuitId, currentSuggestion.SuggestionModel.AnimeId);
+
+                            var content = string.Join(" ", votes.Select(x => FormatMention(x.UserId)));
+                            await Message.ModifyAsync(x => 
+                                {
+                                    x.Content = string.IsNullOrWhiteSpace(content) ? string.Empty : content;
+                                    x.Embed = (Embed)Message.Embeds.Single();
+                                });
                         }
                     }
                 }

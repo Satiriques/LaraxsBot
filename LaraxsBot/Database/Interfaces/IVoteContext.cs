@@ -12,7 +12,7 @@ namespace LaraxsBot.Database.Interfaces
         Task<List<AnimeVoteModel>> GetVotesAsync(ulong nuitId);
         void BackupAndDrop();
         Task<AnimeVoteModel?> GetVoteAsync(ulong animeId, ulong nuitId, ulong userId);
-        Task<bool> VoteExistsAsync(ulong animeId, ulong nuitId);
+        Task<bool> VoteExistsAsync(ulong animeId, ulong nuitId, ulong userId);
         Task<List<AnimeVoteModel>> GetVotesAsync(ulong nuidId, ulong animeId);
         Task DeleteVotesAsync(IEnumerable<AnimeVoteModel> voteModels);
         Task DeleteVoteAsync(AnimeVoteModel model);

@@ -94,7 +94,7 @@ namespace LaraxsBot.Database.Contexts
             => await Votes.AsQueryable().Where(x => x.NuitId == nuidId && x.AnimeId == animeId).ToListAsync();
         public async Task<AnimeVoteModel?> GetVoteAsync(ulong nuitId, ulong animeId, ulong userId)
             => await Votes.AsQueryable().SingleOrDefaultAsync(x => x.AnimeId == animeId && x.NuitId == nuitId && x.UserId == userId);
-        public async Task<bool> VoteExistsAsync(ulong animeId, ulong nuitId)
-            => await Votes.AsQueryable().AnyAsync(x => x.AnimeId == animeId && x.NuitId == nuitId);
+        public async Task<bool> VoteExistsAsync(ulong animeId, ulong nuitId, ulong userId)
+            => await Votes.AsQueryable().AnyAsync(x => x.AnimeId == animeId && x.NuitId == nuitId && x.UserId == userId);
     }
 }
