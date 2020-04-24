@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using LaraxsBot.Common;
 using LaraxsBot.Database.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
+    [RequireOwner]
     public class OwnerModule : ModuleBase
     {
         private readonly IVoteContext _voteContext;

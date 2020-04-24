@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace LaraxsBot.Common
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
-    public class RequiresStaffAttribute : PreconditionAttribute
+    public class RequireStaffAttribute : PreconditionAttribute
     {
 
         public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
