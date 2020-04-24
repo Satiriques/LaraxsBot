@@ -1,22 +1,19 @@
 ﻿using Discord;
 using Discord.Commands;
-using LaraxsBot.Services.Classes;
 using LaraxsBot.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
     public class StaffModule : ModuleBase<SocketCommandContext>
     {
-        private readonly INuitManagerService _nuitManagerService;
+        private readonly INuitService _nuitManagerService;
         private readonly IConfig _config;
         private readonly IMessageService _msg;
 
-        public StaffModule(INuitManagerService nuitManagerService,
-            IConfig config, 
+        public StaffModule(INuitService nuitManagerService,
+            IConfig config,
             IMessageService messageService)
         {
             _nuitManagerService = nuitManagerService;
@@ -67,7 +64,7 @@ namespace LaraxsBot.Modules
             }
             else
             {
-                ReplyAsync(_msg.GetNuitStopped(animeId));
+                await ReplyAsync(_msg.GetNuitStopped(animeId));
             }
         }
     }

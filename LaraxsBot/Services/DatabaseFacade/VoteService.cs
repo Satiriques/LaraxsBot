@@ -2,6 +2,7 @@
 using Discord.WebSocket;
 using LaraxsBot.Common;
 using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Database.Models;
 using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
 using MalParser;
@@ -9,32 +10,29 @@ using System;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace LaraxsBot.Services.Classes
+namespace LaraxsBot.Services.DatabaseFacade
 {
-    public class VoteManagerService : IVoteManagerService
+    public class VoteService : IVoteService
     {
-        private readonly IVoteContext _voteDb;
-        private readonly ISuggestionContext _suggestionDb;
         private readonly INuitContext _nuitDb;
         private readonly IMessageService _msg;
         private readonly DiscordSocketClient _client;
-        private readonly NuitInteractiveService _nuitInteractiveService;
+        private readonly INuitInteractiveService _nuitInteractiveService;
         private readonly IEmbedService _embedService;
         private readonly IConfig _config;
         private readonly MalApi _malApi;
+        private readonly ISuggestionContext _suggestionDb;
 
-        public VoteManagerService(IVoteContext voteContext, 
-            ISuggestionContext suggestionContext, 
+        public VoteService(
             INuitContext nuitContext,
             IMessageService messageService,
             DiscordSocketClient client,
-            NuitInteractiveService nuitInteractiveService,
+            INuitInteractiveService nuitInteractiveService,
             IEmbedService embedService,
             IConfig config,
-            MalApi malApi)
+            MalApi malApi,
+            ISuggestionContext suggestionDb)
         {
-            _voteDb = voteContext;
-            _suggestionDb = suggestionContext;
             _nuitDb = nuitContext;
             _msg = messageService;
             _client = client;
@@ -42,6 +40,7 @@ namespace LaraxsBot.Services.Classes
             _embedService = embedService;
             _config = config;
             _malApi = malApi;
+            _suggestionDb = suggestionDb;
         }
 
         public async Task<IManagerResult> ProposeAsync(ulong animeId, IGuildUser user)
@@ -50,9 +49,10 @@ namespace LaraxsBot.Services.Classes
 
             if(nuit != null)
             {
-                var suggestions = await _suggestionDb.GetAllSuggestionsAsync();
 
-                if(!suggestions.Any(x=>x.AnimeId == animeId && x.NuitId == nuit.NuitId))
+                var suggestions = await _embedService.GetChannelVotesAsync();
+
+                if(!suggestions.Any(x=>x.AnimeId == animeId))
                 {
                     var anime = await _malApi.GetAnimeAsync(animeId);
 
@@ -90,17 +90,7 @@ namespace LaraxsBot.Services.Classes
             return ManagerResult.Default;
         }
 
-        public Task<IManagerResult> UnvoteAsync(IAnimeVote vote)
-        {
-            throw new NotImplementedException();
-        }
-
         public Task<IManagerResult> VoteAsync(ulong animeId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IManagerResult> VoteExistsAsync(ulong animeId)
         {
             throw new NotImplementedException();
         }

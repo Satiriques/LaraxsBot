@@ -1,10 +1,12 @@
 ﻿using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Database.Models;
+using LaraxsBot.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Database.Contexts
@@ -71,10 +73,13 @@ namespace LaraxsBot.Database.Contexts
             }
         }
 
-        public Task<List<SuggestionModel>> GetAllSuggestionsAsync()
-            => Suggestions.AsQueryable().ToListAsync();
+        public async Task<List<SuggestionModel>> GetAllSuggestionsAsync()
+            => await Suggestions.AsQueryable().ToListAsync();
 
-        public Task<List<SuggestionModel>> GetAllSuggestionsAsync(ulong nuitId)
-            => Suggestions.AsQueryable().Where(x => x.NuitId == nuitId).ToListAsync();
+        public async Task<List<SuggestionModel>> GetAllSuggestionsAsync(ulong nuitId)
+            => await Suggestions.AsQueryable().Where(x => x.NuitId == nuitId).ToListAsync();
+
+        public async Task<ISuggestionModel?> GetSuggestionAsync(ulong animeId, ulong nuitId)
+            => await Suggestions.AsQueryable().SingleOrDefaultAsync(x => x.AnimeId == animeId && x.NuitId == nuitId);
     }
 }

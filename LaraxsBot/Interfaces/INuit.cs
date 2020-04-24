@@ -2,7 +2,7 @@
 
 namespace LaraxsBot.Interfaces
 {
-    public interface INuit
+    public interface INuitModel
     {
         ulong NuitId { get; }
         bool IsRunning { get; }

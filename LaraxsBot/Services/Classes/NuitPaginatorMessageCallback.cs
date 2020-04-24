@@ -2,46 +2,48 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
+using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
+using Microsoft.EntityFrameworkCore.Internal;
+using Microsoft.EntityFrameworkCore.ValueGeneration.Internal;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
-using System.Text;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using System.Transactions;
 
 namespace LaraxsBot.Services.Classes
 {
     public class NuitPaginatorMessageCallback : IReactionCallback
     {
-        public SocketCommandContext Context { get; }
+        private readonly IServiceProvider _serviceProvider;
+        public ulong AnimeId;
+
+        public NuitPaginatorMessageCallback(NuitInteractiveService service,
+            IServiceProvider serviceProvider,
+            IUserMessage message,
+            ulong animeId,
+            ICriterion<SocketReaction>? criterion = null)
+        {
+            _interactive = service;
+            _serviceProvider = serviceProvider;
+            Message = message;
+            AnimeId = animeId;
+            Context = null;
+            Criterion = criterion ?? new EmptyCriterion<SocketReaction>();
+        }
+
         public NuitInteractiveService _interactive { get; private set; }
+        public SocketCommandContext? Context { get; }
+        public ICriterion<SocketReaction> Criterion { get; }
         public IUserMessage Message { get; private set; }
 
         public RunMode RunMode => RunMode.Sync;
-        public ICriterion<SocketReaction> Criterion => _criterion;
-
-        public ulong AnimeId;
-        private readonly IVoteContext _voteDb;
-
         public TimeSpan? Timeout => new TimeSpan(0, 0, 0, 0, -1);
-
-        private readonly ICriterion<SocketReaction> _criterion;
-
-
-        public NuitPaginatorMessageCallback(NuitInteractiveService service,
-            IUserMessage message,
-            ulong animeId,
-            IVoteContext voteContext,
-            ICriterion<SocketReaction> criterion = null)
-        {
-            _interactive = service;
-            Message = message;
-            AnimeId = animeId;
-            _voteDb = voteContext;
-            Context = null;
-            _criterion = criterion ?? new EmptyCriterion<SocketReaction>();
-        }
-
         public async Task DisplayAsync()
         {
             _interactive.AddReactionCallback(Message, this);
@@ -71,64 +73,179 @@ namespace LaraxsBot.Services.Classes
             });
         }
 
-        public void RemoveCallBack(IMessage message)
-        {
-            _interactive.RemoveReactionCallback(message);
-        }
-
         public async Task<bool> HandleCallbackAsync(SocketReaction reaction)
         {
             var emote = reaction.Emote;
-            var user = reaction.User.Value as SocketGuildUser;
+            var user = (SocketGuildUser)reaction.User.Value;
+            bool wasMessageRemoved = false;
+            var embedService = _serviceProvider.GetRequiredService<IEmbedService>();
 
             if (emote.Equals(new Emoji("⬆")))
             {
-                //if (!await _service.VoteExistsAsync(NuitActive.Key, AnimeId, reaction.UserId))
-                //{
-                //    await _service.AddVoteAsync(NuitActive.Key, AnimeId, reaction.UserId);
-                //    var votes = await _service.GetVotesAsync(NuitActive.Key);
-                //    //await _service.OrganiseDisplayAsync(votes, reaction.Channel as ITextChannel);
-                //}
+                var currentSuggestion = await embedService.GetVoteFromEmbedAsync(Message);
 
+                using (var voteDb = new VoteContext())
+                {
+                    if (currentSuggestion != null
+                        && !await voteDb.VoteExistsAsync(currentSuggestion.SuggestionModel.AnimeId,
+                                currentSuggestion.SuggestionModel.NuitId))
+                    {
+                        await voteDb.CreateVoteAsync(currentSuggestion.SuggestionModel.AnimeId,
+                            currentSuggestion.SuggestionModel.NuitId,
+                            user.Id);
+                    }
+                }
+
+                await SortChannelAsync();
             }
             else if (emote.Equals(new Emoji("⬇")))
             {
-                //if (await _service.VoteExistsAsync(NuitActive.Key, AnimeId, reaction.UserId))
-                //{
-                //    await _service.RemVoteAsync(NuitActive.Key, AnimeId, reaction.UserId);
-                //    var votes = await _service.GetVotesAsync(NuitActive.Key);
+                var currentSuggestion = await embedService.GetVoteFromEmbedAsync(Message);
 
-                //    if (await _service.VoteExistsAsync(NuitActive.Key, AnimeId))
-                //    {
-                //        await _service.OrganiseDisplayAsync(votes, reaction.Channel as ITextChannel);
-                //    }
-                //    else
-                //    {
-                //        await _service.RemoveSuggestion(NuitActive.Key, AnimeId, reaction.User.Value);
-                //        await _service.RemoveSuggestionDisplay(AnimeId, reaction.Channel as ITextChannel);
-                //    }
-                //}
+                if (currentSuggestion != null)
+                {
+                    using (var voteDb = new VoteContext())
+                    {
+                        var vote = await voteDb.GetVoteAsync(currentSuggestion.SuggestionModel.NuitId,
+                        currentSuggestion.SuggestionModel.AnimeId,
+                        user.Id);
+
+                        if (vote != null)
+                        {
+                            await voteDb.DeleteVoteAsync(vote);
+                        }
+                    }
+                }
+
+                await SortChannelAsync();
             }
             else if (emote.Equals(new Emoji("ℹ")))
             {
-                //if ((reaction.User.Value as SocketGuildUser).Roles.Any(x => x.Id.Equals(config.StaffRoleId)))
-                //{
-
-                //}
             }
             else if (emote.Equals(new Emoji("❌")))
             {
-                //if ((reaction.User.Value as SocketGuildUser).Roles.Any(x => x.Id.Equals(config.StaffRoleId)))
-                //{
-                //    await _service.RemoveSuggestion(NuitActive.Key, AnimeId, reaction.User.Value);
-                //    RemoveCallBack(Message);
-                //    await Message.DeleteAsync();
-                //}
+                var vote = await embedService.GetVoteFromEmbedAsync(Message);
+                if (vote != null)
+                {
+                    using var voteDb = new VoteContext();
+                    using var suggestionDb = new SuggestionContext();
+
+                    var suggestionModel = await suggestionDb.GetSuggestionAsync(vote.SuggestionModel.AnimeId, vote.SuggestionModel.NuitId);
+                    if (suggestionModel != null)
+                    {
+                        await suggestionDb.DeleteSuggestionAsync(suggestionModel.SuggestionId);
+                        var votes = await voteDb.GetVotesAsync(suggestionModel.NuitId, suggestionModel.AnimeId);
+                        await voteDb.DeleteVotesAsync(votes);
+                    }
+                }
+                RemoveCallBack(Message);
+                await Message.DeleteAsync();
+                wasMessageRemoved = true;
             }
 
-            await Message.RemoveReactionAsync(emote, reaction.User.Value);
+            if (!wasMessageRemoved)
+            {
+                await Message.RemoveReactionAsync(emote, reaction.User.Value);
+            }
             return false;
+        }
 
+        private async Task SortChannelAsync()
+        {
+            var embedService = _serviceProvider.GetRequiredService<IEmbedService>();
+            var votes = (await embedService.GetChannelVotesAsync()).Reverse();
+
+            var messages = votes.Select(x => x.Message).ToArray();
+            var index = messages.FindIndex(x => x.Id == Message.Id);
+
+            if(index >= 0)
+            {
+                var previous = index > 0 ? messages[index - 1] as IUserMessage : null;
+                var next = index < messages.Length - 1 ? messages[index + 1] as IUserMessage : null;
+
+                var previousModel = votes.FirstOrDefault(x => x.Message == previous);
+                var nextModel = votes.FirstOrDefault(x => x.Message == next);
+                var currentModel = votes.First(x => x.Message.Id == Message.Id);
+
+                var currentVoteNumber = await GetNumberOfVotesAsync(currentModel);
+                var previousVoteNumber = previousModel != null ? await GetNumberOfVotesAsync(previousModel) : 0;
+                var nextVoteNumber = nextModel != null ? await GetNumberOfVotesAsync(nextModel) : 0;
+
+                if(previous != null && currentVoteNumber > previousVoteNumber)
+                {
+                    var messageToSwap = await GetFirstMessageWithCount(votes, previousVoteNumber);
+
+                    _interactive.RemoveReactionCallback(Message);
+                    _interactive.RemoveReactionCallback(messageToSwap);
+
+                    await embedService.SwapEmbedAsync(Message, messageToSwap);
+
+                    var swapModel = await embedService.GetVoteFromEmbedAsync(messageToSwap);
+
+                    await _interactive.SetMessageReactionCallback(Message, swapModel!.AnimeId);
+                    await _interactive.SetMessageReactionCallback(messageToSwap, currentModel!.AnimeId);
+                }
+                else if (next != null && currentVoteNumber < nextVoteNumber)
+                {
+                    var messageToSwap = await GetLastMessageWithCount(votes, previousVoteNumber);
+
+                    _interactive.RemoveReactionCallback(Message);
+                    _interactive.RemoveReactionCallback(messageToSwap);
+
+                    await embedService.SwapEmbedAsync(Message, messageToSwap);
+
+                    var swapModel = await embedService.GetVoteFromEmbedAsync(messageToSwap);
+
+                    await _interactive.SetMessageReactionCallback(Message, swapModel!.AnimeId);
+                    await _interactive.SetMessageReactionCallback(messageToSwap, currentModel!.AnimeId);
+                }
+            }
+        }
+
+        private async Task<IUserMessage> GetLastMessageWithCount(IEnumerable<IAnimeChannelVote> votes, int count)
+        {
+            List<VoteWithCount> voteWithCounts = new List<VoteWithCount>();
+            foreach(var vote in votes)
+            {
+                voteWithCounts.Add(new VoteWithCount(vote, await GetNumberOfVotesAsync(vote)));
+            }
+
+            return (IUserMessage)voteWithCounts.Last(x => x.Count == count).Vote.Message;
+        }
+
+        private async Task<IUserMessage> GetFirstMessageWithCount(IEnumerable<IAnimeChannelVote> votes, int count)
+        {
+            List<VoteWithCount> voteWithCounts = new List<VoteWithCount>();
+            foreach (var vote in votes)
+            {
+                voteWithCounts.Add(new VoteWithCount(vote, await GetNumberOfVotesAsync(vote)));
+            }
+
+            return (IUserMessage)voteWithCounts.First(x => x.Count == count).Vote.Message;
+        }
+
+        private class VoteWithCount
+        {
+            public VoteWithCount(IAnimeChannelVote vote, int count)
+            {
+                Vote = vote;
+                Count = count;
+            }
+
+            public IAnimeChannelVote Vote { get; }
+            public int Count { get; }
+        }
+
+        private async Task<int> GetNumberOfVotesAsync(IAnimeChannelVote animeChannelVote)
+        {
+            using var voteDb = new VoteContext();
+            var votes = await voteDb.GetVotesAsync(animeChannelVote.SuggestionModel.NuitId, animeChannelVote.SuggestionModel.AnimeId);
+            return votes.Count;
+        }
+
+        public void RemoveCallBack(IMessage message)
+        {
+            _interactive.RemoveReactionCallback(message);
         }
     }
 }

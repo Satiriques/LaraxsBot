@@ -7,7 +7,7 @@ using System.Text;
 
 namespace LaraxsBot.Database.Models
 {
-    public class NuitModel : INuit
+    public class NuitModel : INuitModel
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong NuitId { get; set; }

@@ -1,10 +1,11 @@
-﻿using System;
+﻿using LaraxsBot.Interfaces;
+using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LaraxsBot.Database.Models
 {
-    public class SuggestionModel
+    public class SuggestionModel : ISuggestionModel
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong SuggestionId { get; set; }

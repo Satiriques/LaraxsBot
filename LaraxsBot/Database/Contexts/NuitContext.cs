@@ -12,11 +12,14 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace LaraxsBot.Database.Contexts
 {
+    [System.Diagnostics.CodeAnalysis.SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "<Pending>")]
     public class NuitContext : DbContext, INuitContext
     {
         public DbSet<NuitModel> Nuits { get; set; }
 
+#pragma warning disable CS8618
         public NuitContext()
+#pragma warning restore CS8618
         {
             Database.EnsureCreated();
         }
@@ -62,6 +65,7 @@ namespace LaraxsBot.Database.Contexts
             await SaveChangesAsync();
         }
 
+       
         public async Task<List<NuitModel>> GetAllNuitsAsync()
             => await Nuits.AsQueryable().ToListAsync();
 

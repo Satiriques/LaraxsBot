@@ -9,14 +9,17 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace LaraxsBot.Services.Classes
+namespace LaraxsBot.Services.DatabaseFacade
 {
-    public class NuitManagerService : INuitManagerService
+    /// <summary>
+    /// Serves as a facade between the user and the nuit database
+    /// </summary>
+    public class NuitService : INuitService
     {
         private readonly INuitContext _nuitContext;
         private readonly IMessageService _msg;
 
-        public NuitManagerService(INuitContext nuitContext,
+        public NuitService(INuitContext nuitContext,
             IMessageService messageService)
         {
             _nuitContext = nuitContext;

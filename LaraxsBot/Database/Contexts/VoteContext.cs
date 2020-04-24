@@ -1,5 +1,7 @@
 ﻿using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Database.Models;
+using LaraxsBot.Interfaces;
+using LaraxsBot.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -13,7 +15,9 @@ namespace LaraxsBot.Database.Contexts
     {
         public DbSet<AnimeVoteModel> Votes { get; set; }
 
+#pragma warning disable CS8618
         public VoteContext()
+#pragma warning restore CS8618
         {
             Database.EnsureCreated();
         }
@@ -45,13 +49,14 @@ namespace LaraxsBot.Database.Contexts
             }
         }
 
-        public async Task CreateVoteAsync(ulong animeId, ulong nuitId)
+        public async Task CreateVoteAsync(ulong animeId, ulong nuitId, ulong userId)
         {
             var vote = new AnimeVoteModel()
             {
                 AnimeId = animeId,
                 CreationDate = DateTime.Now,
-                NuitId = nuitId
+                NuitId = nuitId,
+                UserId = userId,
             };
 
             Votes.Add(vote);
@@ -62,17 +67,34 @@ namespace LaraxsBot.Database.Contexts
         {
             var vote = await Votes.AsQueryable().SingleOrDefaultAsync(x => x.AnimeVoteId == voteId);
 
-            if(vote != null)
+            if (vote != null)
             {
                 Votes.Remove(vote);
                 await SaveChangesAsync();
             }
         }
 
-        public Task<List<AnimeVoteModel>> GetAllVotesAsync()
-            => Votes.AsQueryable().ToListAsync();
+        public async Task DeleteVoteAsync(AnimeVoteModel model)
+        {
+            Votes.Remove(model);
+            await SaveChangesAsync();
+        }
 
-        public Task<List<AnimeVoteModel>> GetAllVotesAsync(ulong nuitId)
-            => Votes.AsQueryable().Where(x => x.NuitId == nuitId).ToListAsync();
+        public async Task DeleteVotesAsync(IEnumerable<AnimeVoteModel> voteModels)
+        {
+            Votes.RemoveRange(voteModels);
+            await SaveChangesAsync();
+        }
+
+        public async Task<List<AnimeVoteModel>> GetVotesAsync()
+            => await Votes.AsQueryable().ToListAsync();
+        public async Task<List<AnimeVoteModel>> GetVotesAsync(ulong nuitId)
+            => await Votes.AsQueryable().Where(x => x.NuitId == nuitId).ToListAsync();
+        public async Task<List<AnimeVoteModel>> GetVotesAsync(ulong nuidId, ulong animeId)
+            => await Votes.AsQueryable().Where(x => x.NuitId == nuidId && x.AnimeId == animeId).ToListAsync();
+        public async Task<AnimeVoteModel?> GetVoteAsync(ulong nuitId, ulong animeId, ulong userId)
+            => await Votes.AsQueryable().SingleOrDefaultAsync(x => x.AnimeId == animeId && x.NuitId == nuitId && x.UserId == userId);
+        public async Task<bool> VoteExistsAsync(ulong animeId, ulong nuitId)
+            => await Votes.AsQueryable().AnyAsync(x => x.AnimeId == animeId && x.NuitId == nuitId);
     }
 }

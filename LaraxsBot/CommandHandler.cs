@@ -6,6 +6,7 @@ using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Services;
 using LaraxsBot.Services.Classes;
+using LaraxsBot.Services.DatabaseFacade;
 using LaraxsBot.Services.Interfaces;
 using MalParser;
 using Microsoft.Extensions.DependencyInjection;
@@ -21,7 +22,7 @@ namespace LaraxsBot
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
-        private readonly IServiceProvider _services;
+        public readonly IServiceProvider Services;
         private readonly Regex _magicRegex = new Regex(@"\[\[(.*?)\]\]");
         public static char Prefix = '\'';
 
@@ -29,7 +30,7 @@ namespace LaraxsBot
         {
             _commands = commands;
             _client = client;
-            _services = BuildServiceProvider();
+            Services = BuildServiceProvider();
         }
 
         private IServiceProvider BuildServiceProvider()
@@ -41,14 +42,14 @@ namespace LaraxsBot
                         .AddSingleton(_commands)
                         .AddSingleton<IConfig>(config)
                         .AddSingleton<CommandHandler>()
-                        .AddSingleton<NuitInteractiveService>()
+                        .AddSingleton<INuitInteractiveService, NuitInteractiveService>()
                         .AddSingleton<InteractiveService>()
-                        .AddTransient<IVoteContext, VoteContext>()
-                        .AddTransient<IVoteManagerService, VoteManagerService>()
+                        .AddTransient<IVoteService, VoteService>()
                         .AddTransient<IMessageService, FrenchMessageService>()
-                        .AddTransient<INuitManagerService, NuitManagerService>()
-                        .AddTransient<INuitContext, NuitContext>()
-                        .AddTransient<ISuggestionContext, SuggestionContext>()
+                        .AddTransient<INuitService, NuitService>()
+                        .AddDbContext<INuitContext, NuitContext>()
+                        .AddDbContext<IVoteContext, VoteContext>()
+                        .AddDbContext<ISuggestionContext, SuggestionContext>()
                         .AddTransient<IEmbedService, EmbedService>()
                         .AddTransient<MalApi>()
                         .BuildServiceProvider();
@@ -68,7 +69,7 @@ namespace LaraxsBot
             // If you do not use Dependency Injection, pass null.
             // See Dependency Injection guide for more information.
             await _commands.AddModulesAsync(assembly: Assembly.GetEntryAssembly(),
-                                            services: _services);
+                                            services: Services);
         }
 
         private async Task HandleCommandAsync(SocketMessage messageParam)
@@ -95,7 +96,7 @@ namespace LaraxsBot
             IResult result = await _commands.ExecuteAsync(
                 context: context,
                 argPos: argPos,
-                services: _services);
+                services: Services);
 
             if (!result.IsSuccess)
             {

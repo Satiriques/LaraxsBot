@@ -1,4 +1,6 @@
 ﻿using LaraxsBot.Database.Contexts;
+using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Services.DatabaseFacade;
 using LaraxsBot.Services.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NCrunch.Framework;
@@ -15,20 +17,25 @@ namespace LaraxsBot.Services.Classes.Tests
     public class NuitManagerServiceTests
     {
         private NuitContext _nuitContext;
-        private INuitManagerService _service;
+        private VoteContext _voteContext;
+        private INuitService _service;
 
         [TestInitialize]
         public void TestInitialize()
         {
             _nuitContext = new NuitContext();
-            _service = new NuitManagerService(_nuitContext, new FrenchMessageService());
+            _voteContext = new VoteContext();
+            _service = new NuitService(_nuitContext, new FrenchMessageService());
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
             _nuitContext.Database.EnsureDeleted();
-            Directory.Delete(Path.Combine(AppContext.BaseDirectory, "data"));
+            Directory.Delete(Path.Combine(AppContext.BaseDirectory, "data"), true);
+
+            _nuitContext.Dispose();
+            _voteContext.Dispose();
         }
 
         [TestMethod]

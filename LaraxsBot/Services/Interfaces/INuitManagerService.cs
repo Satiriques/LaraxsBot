@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Services.Interfaces
 {
-    public interface INuitManagerService
+    public interface INuitService
     {
         /// <summary>
         /// Method called on bot startup

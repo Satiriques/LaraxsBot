@@ -3,6 +3,7 @@ using Discord.Addons.Interactive;
 using Discord.Commands;
 using Discord.WebSocket;
 using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -11,26 +12,30 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Services.Classes
 {
-    public class NuitInteractiveService
+    public class NuitInteractiveService : INuitInteractiveService
     {
-
         public DiscordSocketClient Discord { get; }
 
         private Dictionary<ulong, IReactionCallback> _callbacks;
+        private readonly IEmbedService _embedService;
         private readonly IVoteContext _voteContext;
+        private readonly ISuggestionContext _suggestionContext;
+        private readonly IServiceProvider _serviceProvider;
         private TimeSpan _defaultTimeout;
 
-        public NuitInteractiveService(DiscordSocketClient discord, IVoteContext voteContext, TimeSpan? defaultTimeout = null)
+        public NuitInteractiveService(DiscordSocketClient discord, 
+            IServiceProvider serviceProvider, 
+            TimeSpan? defaultTimeout = null)
         {
             Discord = discord;
-            _voteContext = voteContext;
-            Discord.ReactionAdded += HandleReactionAsync;
+            _serviceProvider = serviceProvider;
+            Discord.ReactionAdded += HandleReactionAddedAsync;
 
             _callbacks = new Dictionary<ulong, IReactionCallback>();
             _defaultTimeout = defaultTimeout ?? TimeSpan.FromSeconds(15);
         }
 
-        public Task<SocketMessage> NextMessageAsync(SocketCommandContext context, bool fromSourceUser = true, bool inSourceChannel = true, TimeSpan? timeout = null)
+        public Task<SocketMessage?> NextMessageAsync(SocketCommandContext context, bool fromSourceUser = true, bool inSourceChannel = true, TimeSpan? timeout = null)
         {
             var criterion = new Criteria<SocketMessage>();
             if (fromSourceUser)
@@ -39,9 +44,9 @@ namespace LaraxsBot.Services.Classes
                 criterion.AddCriterion(new EnsureSourceChannelCriterion());
             return NextMessageAsync(context, criterion, timeout);
         }
-        public async Task<SocketMessage> NextMessageAsync(SocketCommandContext context, ICriterion<SocketMessage> criterion, TimeSpan? timeout = null)
+        public async Task<SocketMessage?> NextMessageAsync(SocketCommandContext context, ICriterion<SocketMessage> criterion, TimeSpan? timeout = null)
         {
-            timeout = timeout ?? _defaultTimeout;
+            timeout ??= _defaultTimeout;
 
             var eventTrigger = new TaskCompletionSource<SocketMessage>();
 
@@ -66,9 +71,9 @@ namespace LaraxsBot.Services.Classes
                 return null;
         }
 
-        public async Task<IUserMessage> ReplyAndDeleteAsync(SocketCommandContext context, string content, bool isTTS = false, Embed embed = null, TimeSpan? timeout = null, RequestOptions options = null)
+        public async Task<IUserMessage> ReplyAndDeleteAsync(SocketCommandContext context, string content, bool isTTS = false, Embed? embed = null, TimeSpan? timeout = null, RequestOptions? options = null)
         {
-            timeout = timeout ?? _defaultTimeout;
+            timeout ??= _defaultTimeout;
             var message = await context.Channel.SendMessageAsync(content, isTTS, embed, options).ConfigureAwait(false);
             _ = Task.Delay(timeout.Value)
                 .ContinueWith(_ => message.DeleteAsync().ConfigureAwait(false))
@@ -76,9 +81,9 @@ namespace LaraxsBot.Services.Classes
             return message;
         }
 
-        public async Task<IUserMessage> SetMessageReactionCallback(IUserMessage message, ulong animeId, ICriterion<SocketReaction> criterion = null)
+        public async Task<IUserMessage> SetMessageReactionCallback(IUserMessage message, ulong animeId, ICriterion<SocketReaction>? criterion = null)
         {
-            var callback = new NuitPaginatorMessageCallback(this, message, animeId, _voteContext);
+            var callback = new NuitPaginatorMessageCallback(this, _serviceProvider, message, animeId);
             await callback.DisplayAsync().ConfigureAwait(false);
             return callback.Message;
         }
@@ -92,7 +97,7 @@ namespace LaraxsBot.Services.Classes
         public void ClearReactionCallbacks()
             => _callbacks.Clear();
 
-        private async Task HandleReactionAsync(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
+        private async Task HandleReactionAddedAsync(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.UserId == Discord.CurrentUser.Id) return;
             if (!(_callbacks.TryGetValue(message.Id, out var callback))) return;
@@ -116,7 +121,7 @@ namespace LaraxsBot.Services.Classes
 
         public void Dispose()
         {
-            Discord.ReactionAdded -= HandleReactionAsync;
+            Discord.ReactionAdded -= HandleReactionAddedAsync;
         }
     }
 

@@ -10,7 +10,7 @@ namespace LaraxsBot.Services.Classes
 {
     public sealed class Config : IConfig
     {
-        private readonly string _path;
+        private readonly string? _path;
         private Config(string path) { _path = path; }
 
         [JsonConstructor]

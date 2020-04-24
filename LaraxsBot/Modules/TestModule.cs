@@ -58,5 +58,11 @@ namespace LaraxsBot.Modules
                 await ReplyAsync(_messageService.GetInvalidAnimeMessage(animeId));
             }
         }
+
+        [Command("testgetvotes")]
+        public async Task TestGetVotes()
+        {
+             var votes = await _embedService.GetChannelVotesAsync();
+        }
     }
 }

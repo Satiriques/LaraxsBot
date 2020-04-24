@@ -8,9 +8,9 @@ namespace LaraxsBot.Modules
 {
     public class VoteModule : ModuleBase<SocketCommandContext>
     {
-        private readonly IVoteManagerService _service;
+        private readonly IVoteService _service;
 
-        public VoteModule(IVoteManagerService service)
+        public VoteModule(IVoteService service)
         {
             _service = service;
         }

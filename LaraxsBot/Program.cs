@@ -1,7 +1,11 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using LaraxsBot.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
 using System;
+using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 using System.Transactions;
 
@@ -9,9 +13,9 @@ namespace LaraxsBot
 {
     class Program
     {
-        private DiscordSocketClient _client;
-        private CommandService _commandService;
-        private CommandHandler _commandHandler;
+        private DiscordSocketClient? _client;
+        private CommandService? _commandService;
+        private CommandHandler? _commandHandler;
 
         static async Task Main() 
             => await new Program().MainAsync();
@@ -23,7 +27,7 @@ namespace LaraxsBot
             _commandHandler = new CommandHandler(_client, _commandService);
 
             _client.Log += Log;
-            _client.Ready += Ready;
+            _client.Ready += ReadyAsync;
 
             // Remember to keep token private or to read it from an 
             // external source! In this case, we are reading the token 
@@ -32,19 +36,43 @@ namespace LaraxsBot
             // Internet or by using other methods such as reading from 
             // a configuration.
             var token = Environment.GetEnvironmentVariable("DiscordToken", EnvironmentVariableTarget.User);
-            await _client.LoginAsync(TokenType.Bot, token);
-            await _client.StartAsync();
 
             await _commandHandler.InstallCommandsAsync();
+            await _client.LoginAsync(TokenType.Bot, token);
+            await _client.StartAsync();
 
             // Block this task until the program is closed.
             await Task.Delay(-1);
         }
 
-        private Task Ready()
+        private async Task ReadyAsync()
         {
-            _client.SetGameAsync("prefix ;");
-            return Task.CompletedTask;
+            await _client!.SetGameAsync("prefix ;");
+
+            var config = _commandHandler!.Services.GetRequiredService<IConfig>();
+            var nuitService = _commandHandler.Services.GetRequiredService<INuitInteractiveService>();
+            var embedService = _commandHandler.Services.GetRequiredService<IEmbedService>();
+
+            var channel = _client.GetChannel(config.VoteChannelId);
+
+            if(channel is ITextChannel textChannel)
+            {
+                var messages = await textChannel.GetMessagesAsync(100000).FlattenAsync();
+                foreach(var message in messages.OfType<IUserMessage>())
+                {
+                    var vote = await embedService.GetVoteFromEmbedAsync(message);
+
+                    if(vote != null)
+                    {
+                        await nuitService.SetMessageReactionCallback(message, vote.AnimeId);
+                    }
+                }
+
+            }
+
+
+            
+
         }
 
         private Task Log(LogMessage arg)

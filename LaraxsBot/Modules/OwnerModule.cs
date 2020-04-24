@@ -47,6 +47,7 @@ namespace LaraxsBot.Modules
                     _voteContext.BackupAndDrop();
                     break;
                 default:
+                    await ReplyAsync("no database found with name " + database);
                     break;
             }
         }
@@ -57,9 +58,9 @@ namespace LaraxsBot.Modules
             switch (database.ToUpper())
             {
                 case "VOTES":
-                    var votes = await _voteContext.GetAllVotesAsync();
-                    var msg = string.Join(Environment.NewLine, votes.Select(x => $"{x.NuitId} {x.AnimeVoteId}"));
-                    msg = "NuitId AnimeVoteId" + Environment.NewLine + msg;
+                    var votes = await _voteContext.GetVotesAsync();
+                    var msg = string.Join(Environment.NewLine, votes.Select(x => $"{x.NuitId} {x.AnimeVoteId} {x.AnimeId}"));
+                    msg = "NuitId AnimeVoteId AnimeId" + Environment.NewLine + msg;
                     await ReplyAsync(Format.BlockQuote(msg));
                     break;
 
@@ -77,6 +78,7 @@ namespace LaraxsBot.Modules
                     await ReplyAsync(Format.BlockQuote(msg));
                     break;
                 default:
+                    await ReplyAsync($"db {database} was not found");
                     break;
             }
         }

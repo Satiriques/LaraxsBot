@@ -17,5 +17,7 @@ namespace LaraxsBot.Database.Models
         public ulong AnimeId { get; set; }
         [Required]
         public ulong NuitId { get; set; }
+        [Required]
+        public ulong UserId { get; set; }
     }
 }

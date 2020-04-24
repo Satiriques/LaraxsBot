@@ -9,7 +9,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MalParser", "MalParser\MalP
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MalParserTests", "MalParserTests\MalParserTests.csproj", "{A191E2E9-0CC1-4305-8FAB-901315F4E1A7}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LaraxsBotTests", "LaraxsBotTests\LaraxsBotTests.csproj", "{43FA45C8-9DE7-4A2B-B439-C7BE0BAB8B38}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LaraxsBotTests", "LaraxsBotTests\LaraxsBotTests.csproj", "{43FA45C8-9DE7-4A2B-B439-C7BE0BAB8B38}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{386803F9-4A3E-418F-BFEE-41FEE2D8926F}"
+	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

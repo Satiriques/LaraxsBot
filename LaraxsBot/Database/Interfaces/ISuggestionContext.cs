@@ -1,4 +1,5 @@
 ﻿using LaraxsBot.Database.Models;
+using LaraxsBot.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -13,5 +14,6 @@ namespace LaraxsBot.Database.Interfaces
         Task<List<SuggestionModel>> GetAllSuggestionsAsync();
         Task<List<SuggestionModel>> GetAllSuggestionsAsync(ulong nuitId);
         void BackupAndDrop();
+        Task<ISuggestionModel?> GetSuggestionAsync(ulong animeId, ulong nuitId);
     }
 }
