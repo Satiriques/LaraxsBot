@@ -9,6 +9,7 @@ namespace LaraxsBot.Services.Interfaces
     {
         string NoRunningNuitFound { get; }
         string NuitAlreadyRunning { get; }
+        string StaffOnlyCommand { get; }
 
         public string GetInvalidAnimeMessage(ulong id);
         string GetVoteCreatorFooterNote(IGuildUser user);

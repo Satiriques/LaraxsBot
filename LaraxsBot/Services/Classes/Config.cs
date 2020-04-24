@@ -38,5 +38,7 @@ namespace LaraxsBot.Services.Classes
         }
 
         public ulong VoteChannelId { get; set; }
+
+        public ulong StaffRoleId { get; set; }
     }
 }
