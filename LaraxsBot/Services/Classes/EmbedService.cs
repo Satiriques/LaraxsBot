@@ -142,11 +142,17 @@ namespace LaraxsBot.Services.Classes
             var tempEmbed = message1.Embeds.Single();
             var tempContent = message1.Content;
 
-            await message1.ModifyAsync(x => x.Embed = (Embed)message2.Embeds.Single());
-            await message1.ModifyAsync(x => x.Content = message2.Content);
+            await message1.ModifyAsync(x =>
+            {
+                x.Embed = (Embed)message2.Embeds.Single();
+                x.Content = message2.Content;
+            });
 
-            await message2.ModifyAsync(x => x.Embed = (Embed)tempEmbed);
-            await message2.ModifyAsync(x => x.Content = tempContent);
+            await message2.ModifyAsync(x =>
+            {
+                x.Embed = (Embed)tempEmbed;
+                x.Content = tempContent;
+            });
         }
     }
 }
