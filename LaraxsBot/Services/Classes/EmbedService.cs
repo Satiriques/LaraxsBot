@@ -127,16 +127,6 @@ namespace LaraxsBot.Services.Classes
             }.Build();
         }
 
-        public void EditEmbed()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void RemovedEmbed()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task SwapEmbedAsync(IUserMessage message1, IUserMessage message2)
         {
             var tempEmbed = message1.Embeds.Single();

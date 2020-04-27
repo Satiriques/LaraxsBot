@@ -13,8 +13,6 @@ namespace LaraxsBot.Services.Interfaces
     public interface IEmbedService
     {
         public Embed CreateEmbed(IAnime anime);
-        public void EditEmbed();
-        public void RemovedEmbed();
         public Task SwapEmbedAsync(IUserMessage message1, IUserMessage message2);
         Embed CreateVoteEmbed(IAnime anime, ulong id, IGuildUser user);
         Task<IEnumerable<IAnimeChannelVote>> GetChannelVotesAsync();
