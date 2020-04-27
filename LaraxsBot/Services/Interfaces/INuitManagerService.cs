@@ -1,4 +1,5 @@
-﻿using LaraxsBot.Interfaces;
+﻿using LaraxsBot.Database.Models;
+using LaraxsBot.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,11 +10,6 @@ namespace LaraxsBot.Services.Interfaces
     public interface INuitService
     {
         /// <summary>
-        /// Method called on bot startup
-        /// </summary>
-        /// <returns></returns>
-        Task InitializeAsync();
-        /// <summary>
         /// Creates a new nuit, throws if a nuit is already running.
         /// </summary>
         /// <returns></returns>
@@ -21,5 +17,6 @@ namespace LaraxsBot.Services.Interfaces
         Task<int> GetNumberOfNuitAsync();
         Task<IManagerResult> StopNuitAsync(ulong animeId);
         Task<IManagerResult> StartNuitAsync(ulong nuitId);
+        Task<NuitModel?> GetRunningNuitAsync();
     }
 }

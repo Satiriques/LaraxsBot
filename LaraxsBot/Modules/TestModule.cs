@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
+    [RequireOwner]
     public class TestModule : ModuleBase<SocketCommandContext>
     {
         private readonly IEmbedService _embedService;

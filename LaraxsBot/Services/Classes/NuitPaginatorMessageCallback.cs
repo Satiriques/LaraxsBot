@@ -21,16 +21,22 @@ namespace LaraxsBot.Services.Classes
     public class NuitPaginatorMessageCallback : IReactionCallback
     {
         private readonly IServiceProvider _serviceProvider;
+        private readonly IVoteContext _voteManager;
+        private readonly ISuggestionContext _suggestionManager;
         public ulong AnimeId;
 
         public NuitPaginatorMessageCallback(NuitInteractiveService service,
             IServiceProvider serviceProvider,
+            IVoteContext voteManager,
+            ISuggestionContext suggestionManager,
             IUserMessage message,
             ulong animeId,
             ICriterion<SocketReaction>? criterion = null)
         {
             _interactive = service;
             _serviceProvider = serviceProvider;
+            _voteManager = voteManager;
+            _suggestionManager = suggestionManager;
             Message = message;
             AnimeId = animeId;
             Context = null;
@@ -73,7 +79,7 @@ namespace LaraxsBot.Services.Classes
             });
         }
 
-        
+
 
         public async Task<bool> HandleCallbackAsync(SocketReaction reaction)
         {
@@ -89,21 +95,19 @@ namespace LaraxsBot.Services.Classes
             {
                 var currentSuggestion = await embedService.GetVoteFromEmbedAsync(Message);
 
-                using (var voteDb = new VoteContext())
+                if (currentSuggestion != null
+                    && !await _voteManager.VoteExistsAsync(currentSuggestion.SuggestionModel.AnimeId,
+                            currentSuggestion.SuggestionModel.NuitId, user.Id))
                 {
-                    if (currentSuggestion != null
-                        && !await voteDb.VoteExistsAsync(currentSuggestion.SuggestionModel.AnimeId,
-                                currentSuggestion.SuggestionModel.NuitId, user.Id))
-                    {
-                        await voteDb.CreateVoteAsync(currentSuggestion.SuggestionModel.AnimeId,
-                            currentSuggestion.SuggestionModel.NuitId,
-                            user.Id);
+                    await _voteManager.CreateVoteAsync(currentSuggestion.SuggestionModel.AnimeId,
+                        currentSuggestion.SuggestionModel.NuitId,
+                        user.Id);
 
-                        var votes = await voteDb.GetVotesAsync(currentSuggestion.SuggestionModel.NuitId, currentSuggestion.SuggestionModel.AnimeId);
+                    var votes = await _voteManager.GetVotesAsync(currentSuggestion.SuggestionModel.NuitId, currentSuggestion.SuggestionModel.AnimeId);
 
-                        await Message.ModifyAsync(x => x.Content = string.Join(" ", votes.Select(x => FormatMention(x.UserId))));
-                    }
+                    await Message.ModifyAsync(x => x.Content = string.Join(" ", votes.Select(x => FormatMention(x.UserId))));
                 }
+
 
                 await SortChannelAsync();
             }
@@ -113,26 +117,24 @@ namespace LaraxsBot.Services.Classes
 
                 if (currentSuggestion != null)
                 {
-                    using (var voteDb = new VoteContext())
+                    var vote = await _voteManager.GetVoteAsync(currentSuggestion.SuggestionModel.NuitId,
+                    currentSuggestion.SuggestionModel.AnimeId,
+                    user.Id);
+
+                    if (vote != null)
                     {
-                        var vote = await voteDb.GetVoteAsync(currentSuggestion.SuggestionModel.NuitId,
-                        currentSuggestion.SuggestionModel.AnimeId,
-                        user.Id);
+                        await _voteManager.DeleteVoteAsync(vote);
 
-                        if (vote != null)
-                        {
-                            await voteDb.DeleteVoteAsync(vote);
+                        var votes = await _voteManager.GetVotesAsync(currentSuggestion.SuggestionModel.NuitId, currentSuggestion.SuggestionModel.AnimeId);
 
-                            var votes = await voteDb.GetVotesAsync(currentSuggestion.SuggestionModel.NuitId, currentSuggestion.SuggestionModel.AnimeId);
-
-                            var content = string.Join(" ", votes.Select(x => FormatMention(x.UserId)));
-                            await Message.ModifyAsync(x => 
-                                {
-                                    x.Content = string.IsNullOrWhiteSpace(content) ? string.Empty : content;
-                                    x.Embed = (Embed)Message.Embeds.Single();
-                                });
-                        }
+                        var content = string.Join(" ", votes.Select(x => FormatMention(x.UserId)));
+                        await Message.ModifyAsync(x =>
+                            {
+                                x.Content = string.IsNullOrWhiteSpace(content) ? string.Empty : content;
+                                x.Embed = (Embed)Message.Embeds.Single();
+                            });
                     }
+
                 }
 
                 await SortChannelAsync();
@@ -145,15 +147,12 @@ namespace LaraxsBot.Services.Classes
                 var vote = await embedService.GetVoteFromEmbedAsync(Message);
                 if (vote != null)
                 {
-                    using var voteDb = new VoteContext();
-                    using var suggestionDb = new SuggestionContext();
-
-                    var suggestionModel = await suggestionDb.GetSuggestionAsync(vote.SuggestionModel.AnimeId, vote.SuggestionModel.NuitId);
+                    var suggestionModel = await _suggestionManager.GetSuggestionAsync(vote.SuggestionModel.AnimeId, vote.SuggestionModel.NuitId);
                     if (suggestionModel != null)
                     {
-                        await suggestionDb.DeleteSuggestionAsync(suggestionModel.SuggestionId);
-                        var votes = await voteDb.GetVotesAsync(suggestionModel.NuitId, suggestionModel.AnimeId);
-                        await voteDb.DeleteVotesAsync(votes);
+                        await _suggestionManager.DeleteSuggestionAsync(suggestionModel.SuggestionId);
+                        var votes = await _voteManager.GetVotesAsync(suggestionModel.NuitId, suggestionModel.AnimeId);
+                        await _voteManager.DeleteVotesAsync(votes);
                     }
                 }
                 RemoveCallBack(Message);
@@ -176,7 +175,7 @@ namespace LaraxsBot.Services.Classes
             var messages = votes.Select(x => x.Message).ToArray();
             var index = messages.FindIndex(x => x.Id == Message.Id);
 
-            if(index >= 0)
+            if (index >= 0)
             {
                 var previous = index > 0 ? messages[index - 1] as IUserMessage : null;
                 var next = index < messages.Length - 1 ? messages[index + 1] as IUserMessage : null;
@@ -189,7 +188,7 @@ namespace LaraxsBot.Services.Classes
                 var previousVoteNumber = previousModel != null ? await GetNumberOfVotesAsync(previousModel) : 0;
                 var nextVoteNumber = nextModel != null ? await GetNumberOfVotesAsync(nextModel) : 0;
 
-                if(previous != null && currentVoteNumber > previousVoteNumber)
+                if (previous != null && currentVoteNumber > previousVoteNumber)
                 {
                     var messageToSwap = await GetFirstMessageWithCount(votes, previousVoteNumber);
 
@@ -223,7 +222,7 @@ namespace LaraxsBot.Services.Classes
         private async Task<IUserMessage> GetLastMessageWithCount(IEnumerable<IAnimeChannelVote> votes, int count)
         {
             List<VoteWithCount> voteWithCounts = new List<VoteWithCount>();
-            foreach(var vote in votes)
+            foreach (var vote in votes)
             {
                 voteWithCounts.Add(new VoteWithCount(vote, await GetNumberOfVotesAsync(vote)));
             }
@@ -256,8 +255,7 @@ namespace LaraxsBot.Services.Classes
 
         private async Task<int> GetNumberOfVotesAsync(IAnimeChannelVote animeChannelVote)
         {
-            using var voteDb = new VoteContext();
-            var votes = await voteDb.GetVotesAsync(animeChannelVote.SuggestionModel.NuitId, animeChannelVote.SuggestionModel.AnimeId);
+            var votes = await _voteManager.GetVotesAsync(animeChannelVote.SuggestionModel.NuitId, animeChannelVote.SuggestionModel.AnimeId);
             return votes.Count;
         }
 

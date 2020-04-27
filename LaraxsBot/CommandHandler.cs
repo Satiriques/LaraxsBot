@@ -4,6 +4,7 @@ using Discord.Commands;
 using Discord.WebSocket;
 using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Database.Managers;
 using LaraxsBot.Services;
 using LaraxsBot.Services.Classes;
 using LaraxsBot.Services.DatabaseFacade;
@@ -47,9 +48,9 @@ namespace LaraxsBot
                         .AddTransient<IVoteService, VoteService>()
                         .AddTransient<IMessageService, FrenchMessageService>()
                         .AddTransient<INuitService, NuitService>()
-                        .AddDbContext<INuitContext, NuitContext>()
-                        .AddDbContext<IVoteContext, VoteContext>()
-                        .AddDbContext<ISuggestionContext, SuggestionContext>()
+                        .AddTransient<INuitContext, NuitContextManager>()
+                        .AddTransient<IVoteContext, VoteContextManager>()
+                        .AddTransient<ISuggestionContext, SuggestionContextManager>()
                         .AddTransient<IEmbedService, EmbedService>()
                         .AddTransient<MalApi>()
                         .BuildServiceProvider();

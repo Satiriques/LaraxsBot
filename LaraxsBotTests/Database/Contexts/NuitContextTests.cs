@@ -1,4 +1,5 @@
 ﻿using LaraxsBot.Database.Contexts;
+using LaraxsBot.Database.Managers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoreLinq;
 using NCrunch.Framework;
@@ -15,20 +16,20 @@ namespace LaraxsBot.Database.Contexts.Tests
     [SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "<Pending>")]
     public class NuitContextTests
     {
-        private readonly NuitContext _context = new NuitContext();
+        private readonly NuitContextManager _context = new NuitContextManager();
 
         [TestCleanup]
         public void TestCleanup()
         {
-            _context.Database.EnsureDeleted();
+            _context.EnsureDeleted();
             Directory.Delete(Path.Combine(AppContext.BaseDirectory, "data"));
         }
 
         [TestMethod]
         public void NuitContextTest()
         {
-            var context = new NuitContext();
-            context.Database.EnsureDeleted();
+            var context = new NuitContextManager();
+            context.EnsureDeleted();
         }
 
         [TestMethod]

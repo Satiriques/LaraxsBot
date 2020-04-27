@@ -13,7 +13,6 @@ namespace LaraxsBot.Common
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method, AllowMultiple = false, Inherited = true)]
     public class RequireStaffAttribute : PreconditionAttribute
     {
-
         public override async Task<PreconditionResult> CheckPermissionsAsync(ICommandContext context, CommandInfo command, IServiceProvider services)
         {
             var config = services.GetRequiredService<IConfig>();

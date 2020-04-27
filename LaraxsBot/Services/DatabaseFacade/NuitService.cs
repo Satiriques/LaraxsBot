@@ -1,6 +1,7 @@
 ﻿using LaraxsBot.Common;
 using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Database.Models;
 using LaraxsBot.Interfaces;
 using LaraxsBot.Services.Interfaces;
 using System;
@@ -74,11 +75,6 @@ namespace LaraxsBot.Services.DatabaseFacade
             return nuits.Count();
         }
 
-        public Task InitializeAsync()
-        {
-            throw new NotImplementedException();
-        }
-
         public async Task<IManagerResult> StopNuitAsync(ulong animeId)
         {
             var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
@@ -94,5 +90,8 @@ namespace LaraxsBot.Services.DatabaseFacade
 
             return ManagerResult.Default;
         }
+
+        public async Task<NuitModel?> GetRunningNuitAsync()
+            => await _nuitContext.GetStillRunningNuitAsync();
     }
 }

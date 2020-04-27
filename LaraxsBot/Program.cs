@@ -69,10 +69,6 @@ namespace LaraxsBot
                 }
 
             }
-
-
-            
-
         }
 
         private Task Log(LogMessage arg)

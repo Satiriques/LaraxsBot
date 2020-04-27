@@ -1,11 +1,13 @@
 ﻿using Discord;
 using Discord.Commands;
+using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
+    [RequireStaff]
     public class StaffModule : ModuleBase<SocketCommandContext>
     {
         private readonly INuitService _nuitManagerService;
@@ -58,13 +60,34 @@ namespace LaraxsBot.Modules
         public async Task StopNuitAsync(ulong animeId)
         {
             var result = await _nuitManagerService.StopNuitAsync(animeId);
-            if (!result.Success)
+            if (result.Success)
             {
-                await ReplyAsync(result.Message);
+                var channel = Context.Guild.GetTextChannel(_config.VoteChannelId);
+                var messages = await channel.GetMessagesAsync(100000).FlattenAsync();
+
+                await channel.DeleteMessagesAsync(messages);
+
+                await ReplyAsync(_msg.GetNuitStopped(animeId));
             }
             else
             {
-                await ReplyAsync(_msg.GetNuitStopped(animeId));
+                await ReplyAsync(result.Message);
+            }
+        }
+
+        [Command("nuit helper")]
+        public async Task NuitHelperAsync()
+        {
+            var nuit = await _nuitManagerService.GetRunningNuitAsync();
+
+            // nuit is running
+            if(nuit != null)
+            {
+
+            }
+            else // nuit is not running
+            {
+
             }
         }
     }

@@ -17,18 +17,21 @@ namespace LaraxsBot.Services.Classes
         public DiscordSocketClient Discord { get; }
 
         private Dictionary<ulong, IReactionCallback> _callbacks;
-        private readonly IEmbedService _embedService;
-        private readonly IVoteContext _voteContext;
-        private readonly ISuggestionContext _suggestionContext;
         private readonly IServiceProvider _serviceProvider;
+        private readonly ISuggestionContext _suggestionContext;
+        private readonly IVoteContext _voteContext;
         private TimeSpan _defaultTimeout;
 
-        public NuitInteractiveService(DiscordSocketClient discord, 
-            IServiceProvider serviceProvider, 
+        public NuitInteractiveService(DiscordSocketClient discord,
+            IServiceProvider serviceProvider,
+            ISuggestionContext suggestionContext,
+            IVoteContext voteContext,
             TimeSpan? defaultTimeout = null)
         {
             Discord = discord;
             _serviceProvider = serviceProvider;
+            _suggestionContext = suggestionContext;
+            _voteContext = voteContext;
             Discord.ReactionAdded += HandleReactionAddedAsync;
 
             _callbacks = new Dictionary<ulong, IReactionCallback>();
@@ -83,7 +86,7 @@ namespace LaraxsBot.Services.Classes
 
         public async Task<IUserMessage> SetMessageReactionCallback(IUserMessage message, ulong animeId, ICriterion<SocketReaction>? criterion = null)
         {
-            var callback = new NuitPaginatorMessageCallback(this, _serviceProvider, message, animeId);
+            var callback = new NuitPaginatorMessageCallback(this, _serviceProvider, _voteContext, _suggestionContext, message, animeId);
             await callback.DisplayAsync().ConfigureAwait(false);
             return callback.Message;
         }

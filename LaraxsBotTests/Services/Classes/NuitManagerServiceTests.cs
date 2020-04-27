@@ -1,5 +1,6 @@
 ﻿using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
+using LaraxsBot.Database.Managers;
 using LaraxsBot.Services.DatabaseFacade;
 using LaraxsBot.Services.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
@@ -16,26 +17,23 @@ namespace LaraxsBot.Services.Classes.Tests
     [SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "<Pending>")]
     public class NuitManagerServiceTests
     {
-        private NuitContext _nuitContext;
-        private VoteContext _voteContext;
+        private INuitContext _nuitContext;
+        private IVoteContext _voteContext;
         private INuitService _service;
 
         [TestInitialize]
         public void TestInitialize()
         {
-            _nuitContext = new NuitContext();
-            _voteContext = new VoteContext();
+            _nuitContext = new NuitContextManager();
+            _voteContext = new VoteContextManager();
             _service = new NuitService(_nuitContext, new FrenchMessageService());
         }
 
         [TestCleanup]
         public void TestCleanup()
         {
-            _nuitContext.Database.EnsureDeleted();
+            _nuitContext.EnsureDeleted();
             Directory.Delete(Path.Combine(AppContext.BaseDirectory, "data"), true);
-
-            _nuitContext.Dispose();
-            _voteContext.Dispose();
         }
 
         [TestMethod]
