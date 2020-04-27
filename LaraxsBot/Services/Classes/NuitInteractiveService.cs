@@ -16,22 +16,25 @@ namespace LaraxsBot.Services.Classes
     {
         public DiscordSocketClient Discord { get; }
 
-        private Dictionary<ulong, IReactionCallback> _callbacks;
+        private readonly Dictionary<ulong, IReactionCallback> _callbacks;
         private readonly IServiceProvider _serviceProvider;
         private readonly ISuggestionContext _suggestionContext;
         private readonly IVoteContext _voteContext;
-        private TimeSpan _defaultTimeout;
+        private readonly IEmbedService _embedService;
+        private readonly TimeSpan _defaultTimeout;
 
         public NuitInteractiveService(DiscordSocketClient discord,
             IServiceProvider serviceProvider,
             ISuggestionContext suggestionContext,
             IVoteContext voteContext,
+            IEmbedService embedService,
             TimeSpan? defaultTimeout = null)
         {
             Discord = discord;
             _serviceProvider = serviceProvider;
             _suggestionContext = suggestionContext;
             _voteContext = voteContext;
+            _embedService = embedService;
             Discord.ReactionAdded += HandleReactionAddedAsync;
 
             _callbacks = new Dictionary<ulong, IReactionCallback>();
@@ -86,7 +89,7 @@ namespace LaraxsBot.Services.Classes
 
         public async Task<IUserMessage> SetMessageReactionCallback(IUserMessage message, ulong animeId, ICriterion<SocketReaction>? criterion = null)
         {
-            var callback = new NuitPaginatorMessageCallback(this, _serviceProvider, _voteContext, _suggestionContext, message, animeId);
+            var callback = new NuitPaginatorMessageCallback(this, _serviceProvider, _voteContext, _embedService, _suggestionContext, message, animeId);
             await callback.DisplayAsync().ConfigureAwait(false);
             return callback.Message;
         }
@@ -103,7 +106,7 @@ namespace LaraxsBot.Services.Classes
         private async Task HandleReactionAddedAsync(Cacheable<IUserMessage, ulong> message, ISocketMessageChannel channel, SocketReaction reaction)
         {
             if (reaction.UserId == Discord.CurrentUser.Id) return;
-            if (!(_callbacks.TryGetValue(message.Id, out var callback))) return;
+            if (!_callbacks.TryGetValue(message.Id, out var callback)) return;
             if (!(await callback.Criterion.JudgeAsync(callback.Context, reaction).ConfigureAwait(false)))
                 return;
             switch (callback.RunMode)
