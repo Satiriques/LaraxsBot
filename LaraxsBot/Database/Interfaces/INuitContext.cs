@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Database.Interfaces
 {
-    public interface INuitContext
+    public interface INuitContextManager
     {
         Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId);
         Task<List<NuitModel>> GetAllNuitsAsync();

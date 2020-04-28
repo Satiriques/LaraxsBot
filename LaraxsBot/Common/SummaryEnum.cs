@@ -8,5 +8,7 @@ namespace LaraxsBot.Common
     {
         Nuit,
         VoteModule,
+        Info,
+        Propose,
     }
 }

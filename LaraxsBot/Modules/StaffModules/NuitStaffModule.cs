@@ -5,35 +5,22 @@ using LaraxsBot.Services.Interfaces;
 using System;
 using System.Threading.Tasks;
 
-namespace LaraxsBot.Modules
+namespace LaraxsBot.Modules.StaffModules
 {
     [RequireStaff]
-    public class StaffModule : ModuleBase<SocketCommandContext>
+    public class NuitStaffModule : ModuleBase<SocketCommandContext>
     {
         private readonly INuitService _nuitManagerService;
         private readonly IConfig _config;
         private readonly IMessageService _msg;
 
-        public StaffModule(INuitService nuitManagerService,
+        public NuitStaffModule(INuitService nuitManagerService,
             IConfig config,
             IMessageService messageService)
         {
             _nuitManagerService = nuitManagerService;
             _config = config;
             _msg = messageService;
-        }
-
-        [Command("votechannel")]
-        public async Task SetVoteChannelIdAsync(ITextChannel textChannel)
-        {
-            _config.SetVoteChannelId(textChannel.Id);
-            await ReplyAsync(_msg.GetVoteChannelSet(textChannel.Id));
-        }
-
-        [Command("votechannel")]
-        public async Task GetVoteChannelIdAsync()
-        {
-            await ReplyAsync(_msg.GetVoteChannelGet(_config.VoteChannelId));
         }
 
         [Command("createnuit")]

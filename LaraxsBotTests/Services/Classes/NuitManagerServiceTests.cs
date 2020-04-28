@@ -17,7 +17,7 @@ namespace LaraxsBot.Services.Classes.Tests
     [SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "<Pending>")]
     public class NuitManagerServiceTests
     {
-        private INuitContext _nuitContext;
+        private INuitContextManager _nuitContext;
         private IVoteContext _voteContext;
         private INuitService _service;
 

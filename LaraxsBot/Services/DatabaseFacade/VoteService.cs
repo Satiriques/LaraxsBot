@@ -14,7 +14,7 @@ namespace LaraxsBot.Services.DatabaseFacade
 {
     public class VoteService : IVoteService
     {
-        private readonly INuitContext _nuitDb;
+        private readonly INuitContextManager _nuitDb;
         private readonly IMessageService _msg;
         private readonly DiscordSocketClient _client;
         private readonly INuitInteractiveService _nuitInteractiveService;
@@ -24,7 +24,7 @@ namespace LaraxsBot.Services.DatabaseFacade
         private readonly ISuggestionContext _suggestionDb;
 
         public VoteService(
-            INuitContext nuitContext,
+            INuitContextManager nuitContext,
             IMessageService messageService,
             DiscordSocketClient client,
             INuitInteractiveService nuitInteractiveService,

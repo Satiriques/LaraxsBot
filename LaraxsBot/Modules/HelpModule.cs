@@ -2,12 +2,9 @@
 using Discord.Commands;
 using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
-using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -16,7 +13,7 @@ namespace LaraxsBot.Modules
     //code taken and slighty modified from aux on github : 
     // https://github.com/Aux/Dogey/blob/master/src/Dogey/Modules/HelpModule.cs
     [Group("help"), Name("Help")]
-    public class HelpModule : ModuleBase
+    public class HelpModule : ModuleBase<SocketCommandContext>
     {
         private readonly CommandService _commands;
         private readonly IConfig _config;

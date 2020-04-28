@@ -15,11 +15,11 @@ namespace LaraxsBot.Modules
     public class OwnerModule : ModuleBase
     {
         private readonly IVoteContext _voteContext;
-        private readonly INuitContext _nuitContext;
+        private readonly INuitContextManager _nuitContext;
         private readonly ISuggestionContext _suggestionContext;
 
         public OwnerModule(IVoteContext voteContext,
-            INuitContext nuitContext,
+            INuitContextManager nuitContext,
             ISuggestionContext suggestionContext)
         {
             _voteContext = voteContext;

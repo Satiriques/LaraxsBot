@@ -1,6 +1,7 @@
 ﻿using Discord;
 using Discord.Commands;
 using Discord.WebSocket;
+using LaraxsBot.Services.Classes;
 using LaraxsBot.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -15,6 +16,7 @@ namespace LaraxsBot
     {
         private DiscordSocketClient? _client;
         private CommandService? _commandService;
+        private IConfig _config;
         private CommandHandler? _commandHandler;
 
         static async Task Main() 
@@ -24,7 +26,9 @@ namespace LaraxsBot
         {
             _client = new DiscordSocketClient(new DiscordSocketConfig() { MessageCacheSize = 100000 });
             _commandService = new CommandService();
-            _commandHandler = new CommandHandler(_client, _commandService);
+            _config = Config.EnsureExists("config.json");
+
+            _commandHandler = new CommandHandler(_client, _commandService, _config);
 
             _client.Log += Log;
             _client.Ready += ReadyAsync;

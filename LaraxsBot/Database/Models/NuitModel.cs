@@ -1,13 +1,10 @@
-﻿using LaraxsBot.Interfaces;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace LaraxsBot.Database.Models
 {
-    public class NuitModel : INuitModel
+    public class NuitModel
     {
         [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong NuitId { get; set; }
@@ -21,5 +18,6 @@ namespace LaraxsBot.Database.Models
         [Required]
         public DateTime StopTime { get; set; }
         public ulong WinnerAnimeId { get; set; }
+        public DateTime PlayTime { get; set; }
     }
 }

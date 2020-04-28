@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Database.Managers
 {
-    public class NuitContextManager : INuitContext
+    public class NuitContextManager : INuitContextManager
     {
         public void BackupAndDrop()
         {

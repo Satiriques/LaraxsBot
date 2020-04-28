@@ -17,10 +17,10 @@ namespace LaraxsBot.Services.DatabaseFacade
     /// </summary>
     public class NuitService : INuitService
     {
-        private readonly INuitContext _nuitContext;
+        private readonly INuitContextManager _nuitContext;
         private readonly IMessageService _msg;
 
-        public NuitService(INuitContext nuitContext,
+        public NuitService(INuitContextManager nuitContext,
             IMessageService messageService)
         {
             _nuitContext = nuitContext;

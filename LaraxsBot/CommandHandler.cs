@@ -23,32 +23,33 @@ namespace LaraxsBot
     {
         private readonly DiscordSocketClient _client;
         private readonly CommandService _commands;
+        private readonly IConfig _config;
         public readonly IServiceProvider Services;
         private readonly Regex _magicRegex = new Regex(@"\[\[(.*?)\]\]");
-        public static char Prefix = '\'';
 
-        public CommandHandler(DiscordSocketClient client, CommandService commands)
+        public CommandHandler(DiscordSocketClient client, 
+            CommandService commands, 
+            IConfig config)
         {
             _commands = commands;
+            _config = config;
             _client = client;
             Services = BuildServiceProvider();
         }
 
         private IServiceProvider BuildServiceProvider()
         {
-            var config = Config.EnsureExists("config.json");
-
             return new ServiceCollection()
                         .AddSingleton(_client)
                         .AddSingleton(_commands)
-                        .AddSingleton<IConfig>(config)
+                        .AddSingleton(_config)
                         .AddSingleton<CommandHandler>()
                         .AddSingleton<INuitInteractiveService, NuitInteractiveService>()
                         .AddSingleton<InteractiveService>()
                         .AddTransient<IVoteService, VoteService>()
                         .AddTransient<IMessageService, FrenchMessageService>()
                         .AddTransient<INuitService, NuitService>()
-                        .AddTransient<INuitContext, NuitContextManager>()
+                        .AddTransient<INuitContextManager, NuitContextManager>()
                         .AddTransient<IVoteContext, VoteContextManager>()
                         .AddTransient<ISuggestionContext, SuggestionContextManager>()
                         .AddTransient<IEmbedService, EmbedService>()
@@ -83,11 +84,13 @@ namespace LaraxsBot
             int argPos = 0;
 
             // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-            if (!(message.HasCharPrefix(Prefix, ref argPos) ||
+            if (!(message.HasStringPrefix(_config.CommandPrefix, ref argPos) ||
                 message.HasMentionPrefix(_client.CurrentUser, ref argPos) ||
                 _magicRegex.IsMatch(message.Content)) ||
                 message.Author.IsBot)
+            {
                 return;
+            }
 
             // Create a WebSocket-based command context based on the message
             var context = new SocketCommandContext(_client, message);

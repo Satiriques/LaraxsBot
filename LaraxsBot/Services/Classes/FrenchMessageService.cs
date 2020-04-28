@@ -18,6 +18,16 @@ namespace LaraxsBot.Services.Classes
         public string StaffOnlyCommand
             => "Cette commande peut seulement être utilisé par un membre du staff.";
 
+        public string GetCommandPrefixGet(string commandPrefix)
+        {
+            throw new NotImplementedException();
+        }
+
+        public string GetCommandPrefixSet(string prefix)
+        {
+            throw new NotImplementedException();
+        }
+
         public string GetHelpInfo(ISelfUser currentUser)
             => $"Écrire @{currentUser} help <module> pour plus d'information";
 
@@ -42,6 +52,8 @@ namespace LaraxsBot.Services.Classes
             {
                 SummaryEnum.Nuit => "Affiche la prochaine nuit de l'animé",
                 SummaryEnum.VoteModule => "Commandes pour un utilisateur normal",
+                SummaryEnum.Info => "Donne les informations de performances.",
+                SummaryEnum.Propose => "Propose un animé par id pour la nuit de l'animé",
                 _ => "N/A",
             };
         }

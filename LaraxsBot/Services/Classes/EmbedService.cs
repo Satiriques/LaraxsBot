@@ -17,14 +17,14 @@ namespace LaraxsBot.Services.Classes
         private readonly IMessageService _messageService;
         private readonly IConfig _config;
         private readonly DiscordSocketClient _client;
-        private readonly INuitContext _nuitContext;
+        private readonly INuitContextManager _nuitContext;
         private readonly IVoteContext _voteContext;
         private readonly ISuggestionContext _suggestionContext;
 
         public EmbedService(IMessageService messageService, 
             IConfig config, 
             DiscordSocketClient client,
-            INuitContext nuitContext,
+            INuitContextManager nuitContext,
             IVoteContext voteContext,
             ISuggestionContext suggestionContext)
         {

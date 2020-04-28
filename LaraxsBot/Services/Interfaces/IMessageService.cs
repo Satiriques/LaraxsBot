@@ -22,5 +22,7 @@ namespace LaraxsBot.Services.Interfaces
         string GetHelpInfo(ISelfUser currentUser);
         string GetModuleOrCommandNotExists(string moduleName);
         string GetSummaryFromEnum(SummaryEnum @enum);
+        string GetCommandPrefixSet(string prefix);
+        string GetCommandPrefixGet(string commandPrefix);
     }
 }

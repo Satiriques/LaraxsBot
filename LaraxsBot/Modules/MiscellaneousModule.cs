@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using LaraxsBot.Common;
 using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
@@ -12,16 +13,17 @@ namespace LaraxsBot.Modules
 
         [Group("information"), Name("Information")]
         [Alias("info")]
-        public class InformationModule : ModuleBase<SocketCommandContext>
+        public sealed class InformationModule : ModuleBase<SocketCommandContext>
         {
-            private Process _process;
+            private readonly Process _process;
 
-            InformationModule()
+            private InformationModule()
             {
                 _process = Process.GetCurrentProcess();
             }
+
             [Command]
-            [Summary("Donne les informations de performances.")]
+            [SummaryFromEnum(SummaryEnum.Info)]
             public async Task PerformanceAsync()
             {
                 var builder = new EmbedBuilder();
@@ -34,18 +36,13 @@ namespace LaraxsBot.Modules
                     IconUrl = app.Owner.GetAvatarUrl(),
                 };
 
-
-                var uptime = (DateTime.Now - _process.StartTime);
-
-                var desc = $"**Temps de service:** {GetUptime()}\n" +
-                           $"**Librairie:** {GetLibrary()}\n" +
-                           $"**OS:** {GetOperatingSystem()}\n" +
-                           $"**Framework:** {GetFramework()}\n" +
-                           $"**Utilisation de mémoire:** {GetMemoryUsage()}\n" +
-                           $"**Latence:** {GetLatency()}\n" + 
-                           $"**Github:** https://github.com/Satiriques/LaraxsBot";
-
-                builder.Description = desc;
+                builder.Description = $"**Temps de service:** {GetUptime()}\n" +
+                                      $"**Librairie:** {GetLibrary()}\n" +
+                                      $"**OS:** {GetOperatingSystem()}\n" +
+                                      $"**Framework:** {GetFramework()}\n" +
+                                      $"**Utilisation de mémoire:** {GetMemoryUsage()}\n" +
+                                      $"**Latence:** {GetLatency()}\n" +
+                                      $"**Github:** https://github.com/Satiriques/LaraxsBot";
                 await ReplyAsync("", embed: builder.Build());
             }
 
@@ -69,7 +66,6 @@ namespace LaraxsBot.Modules
 
             public string GetLatency()
                 => $"{Context.Client.Latency}ms";
-
         }
     }
 }

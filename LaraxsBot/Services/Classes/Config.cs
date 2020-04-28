@@ -47,6 +47,6 @@ namespace LaraxsBot.Services.Classes
 
         public ulong StaffRoleId { get; set; }
 
-        public string CommandPrefix { get; set; }
+        public string CommandPrefix { get; set; } = "!";
     }
 }
