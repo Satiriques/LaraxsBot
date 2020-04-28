@@ -16,7 +16,7 @@ namespace LaraxsBot
     {
         private DiscordSocketClient? _client;
         private CommandService? _commandService;
-        private IConfig _config;
+        private IConfig? _config;
         private CommandHandler? _commandHandler;
 
         static async Task Main() 
@@ -71,7 +71,6 @@ namespace LaraxsBot
                         await nuitService.SetMessageReactionCallback(message, vote.AnimeId);
                     }
                 }
-
             }
 
             _client.Ready -= ReadyAsync;

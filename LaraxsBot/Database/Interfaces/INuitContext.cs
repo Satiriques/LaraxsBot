@@ -16,5 +16,6 @@ namespace LaraxsBot.Database.Interfaces
         Task StartNuitAsync(ulong id);
         void BackupAndDrop();
         void EnsureDeleted();
+        Task<NuitModel?> GetLastEndedAnimeAsync();
     }
 }

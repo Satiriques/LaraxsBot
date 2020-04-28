@@ -15,13 +15,15 @@ namespace LaraxsBot.Modules
     {
         private readonly IVoteService _service;
         private readonly IEmbedService _embedService;
+        private readonly INuitContextManager _nuitDb;
 
         public VoteModule(IVoteService service, 
             IEmbedService embedService,
-            INuitContextManager nuitContext)
+            INuitContextManager nuitDb)
         {
             _service = service;
             _embedService = embedService;
+            _nuitDb = nuitDb;
         }
 
         [Command("propose")]
@@ -40,7 +42,7 @@ namespace LaraxsBot.Modules
         [Command("")]
         public async Task NuitAsync()
         {
-            
+            await _nuitDb.GetLastEndedAnimeAsync();
 
             //_embedService.CreateEmbed()
         }

@@ -90,5 +90,11 @@ namespace LaraxsBot.Database.Managers
                 }
             }
         }
+
+        public async Task<NuitModel?> GetLastEndedAnimeAsync()
+        {
+            using var db = new NuitContext();
+            return await db.Nuits.AsQueryable().Where(x => x.WinnerAnimeId != 0).OrderByDescending(x => x.PlayTime).FirstOrDefaultAsync();
+        }
     }
 }
