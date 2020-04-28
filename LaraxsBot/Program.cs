@@ -69,6 +69,8 @@ namespace LaraxsBot
                 }
 
             }
+
+            _client.Ready -= ReadyAsync;
         }
 
         private Task Log(LogMessage arg)

@@ -1,4 +1,5 @@
 ﻿using Discord;
+using LaraxsBot.Common;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -18,5 +19,8 @@ namespace LaraxsBot.Services.Interfaces
         string GetVoteChannelGet(ulong id);
         string GetNoNuitFoundWithId(ulong nuitId);
         string GetNuitStopped(ulong animeId);
+        string GetHelpInfo(ISelfUser currentUser);
+        string GetModuleOrCommandNotExists(string moduleName);
+        string GetSummaryFromEnum(SummaryEnum @enum);
     }
 }

@@ -1,18 +1,24 @@
 ﻿using Discord;
 using Discord.Commands;
+using LaraxsBot.Common;
 using LaraxsBot.Services;
 using LaraxsBot.Services.Interfaces;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
+    [SummaryFromEnum(SummaryEnum.VoteModule)]
     public class VoteModule : ModuleBase<SocketCommandContext>
     {
         private readonly IVoteService _service;
+        private readonly IMessageService _msg;
 
-        public VoteModule(IVoteService service)
+        public VoteModule(IVoteService service,
+            IMessageService msg)
         {
             _service = service;
+            _msg = msg;
         }
 
         [Command("propose")]
@@ -33,6 +39,13 @@ namespace LaraxsBot.Modules
             {
                 await ReplyAsync(result.Message);
             }
+        }
+
+        [SummaryFromEnum(SummaryEnum.Nuit)]
+        [Command("nuit")]
+        public async Task NuitAsync()
+        {
+
         }
     }
 }

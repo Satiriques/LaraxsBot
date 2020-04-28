@@ -78,7 +78,7 @@ namespace LaraxsBot.Services.Classes
                 {
                     await Message.AddReactionAsync(new Emoji("❌"));
                     await Task.Delay(1000);
-                }
+                } 
             });
         }
 
@@ -105,7 +105,7 @@ namespace LaraxsBot.Services.Classes
             }
             else if (emote.Equals(new Emoji("❌")))
             {
-                wasMessageRemoved = await HandleRemoveReaction(wasMessageRemoved);
+                wasMessageRemoved = await HandleRemoveReaction();
             }
 
             if (!wasMessageRemoved)
@@ -122,8 +122,8 @@ namespace LaraxsBot.Services.Classes
             if (currentSuggestion != null)
             {
                 var vote = await _voteManager.GetVoteAsync(currentSuggestion.SuggestionModel.NuitId,
-                currentSuggestion.SuggestionModel.AnimeId,
-                user.Id);
+                                                           currentSuggestion.SuggestionModel.AnimeId,
+                                                           user.Id);
 
                 if (vote != null)
                 {
@@ -163,7 +163,7 @@ namespace LaraxsBot.Services.Classes
             await SortChannelAsync();
         }
 
-        private async Task<bool> HandleRemoveReaction(bool wasMessageRemoved)
+        private async Task<bool> HandleRemoveReaction()
         {
             var vote = await _embedService.GetVoteFromEmbedAsync(Message);
             if (vote != null)
@@ -178,8 +178,7 @@ namespace LaraxsBot.Services.Classes
             }
             RemoveCallBack(Message);
             await Message.DeleteAsync();
-            wasMessageRemoved = true;
-            return wasMessageRemoved;
+            return true;
         }
 
         private async Task SortChannelAsync()

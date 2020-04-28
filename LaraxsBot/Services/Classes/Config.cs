@@ -1,17 +1,17 @@
-﻿using Discord;
-using LaraxsBot.Services.Interfaces;
+﻿using LaraxsBot.Services.Interfaces;
 using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
 
 namespace LaraxsBot.Services.Classes
 {
     public sealed class Config : IConfig
     {
         private readonly string? _path;
-        private Config(string path) { _path = path; }
+
+        private Config(string path)
+        {
+            _path = path;
+        }
 
         [JsonConstructor]
         private Config() { }
@@ -37,8 +37,16 @@ namespace LaraxsBot.Services.Classes
             Save();
         }
 
+        public void SetPrefix(string prefix)
+        {
+            CommandPrefix = prefix;
+            Save();
+        }
+
         public ulong VoteChannelId { get; set; }
 
         public ulong StaffRoleId { get; set; }
+
+        public string CommandPrefix { get; set; }
     }
 }
