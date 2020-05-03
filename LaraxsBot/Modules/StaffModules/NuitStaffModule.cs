@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.Addons.Interactive;
 using Discord.Commands;
 using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
@@ -11,19 +12,22 @@ namespace LaraxsBot.Modules.StaffModules
     [RequireStaff]
     [Group("nuit")]
     [Name(nameof(NuitStaffModule))]
-    public class NuitStaffModule : ModuleBase<SocketCommandContext>
+    public class NuitStaffModule : InteractiveBase<SocketCommandContext>
     {
         private readonly INuitService _nuitManagerService;
         private readonly IConfig _config;
         private readonly IMessageService _msg;
+        private readonly IEmbedService _embedService;
 
         public NuitStaffModule(INuitService nuitManagerService,
             IConfig config,
-            IMessageService messageService)
+            IMessageService messageService,
+            IEmbedService embedService)
         {
             _nuitManagerService = nuitManagerService;
             _config = config;
             _msg = messageService;
+            _embedService = embedService;
         }
 
         [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
@@ -63,7 +67,19 @@ namespace LaraxsBot.Modules.StaffModules
         [Command("stop")]
         public async Task StopNuitAsync(ulong animeId)
         {
-            var result = await _nuitManagerService.StopNuitAsync(animeId);
+            await StopAsync(animeId);
+        }
+
+        [SummaryFromEnum(SummaryEnum.NuitStaffStop)]
+        [Command("stop")]
+        public async Task StopNuitAsync(ulong animeId, DateTime playTime)
+        {
+            await StopAsync(animeId, playTime);
+        }
+
+        private async Task StopAsync(ulong animeId, DateTime playTime = default)
+        {
+            var result = playTime == default ? await _nuitManagerService.StopNuitAsync(animeId) : await _nuitManagerService.StopNuitAsync(animeId, playTime);
             if (result.Success)
             {
                 var channel = Context.Guild.GetTextChannel(_config.VoteChannelId);
@@ -79,21 +95,11 @@ namespace LaraxsBot.Modules.StaffModules
             }
         }
 
-        [SummaryFromEnum(SummaryEnum.NuitStaffHelper)]
-        [Command("helper")]
-        public async Task NuitHelperAsync()
+        [SummaryFromEnum(SummaryEnum.NuitStaffStatus)]
+        [Command("status")]
+        public async Task NuitStatusAsync()
         {
-            var nuit = await _nuitManagerService.GetRunningNuitAsync();
 
-            // nuit is running
-            if(nuit != null)
-            {
-
-            }
-            else // nuit is not running
-            {
-
-            }
         }
     }
 }

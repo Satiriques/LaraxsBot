@@ -107,5 +107,21 @@ namespace LaraxsBot.Services.DatabaseFacade
 
             return ManagerResult.Default;
         }
+
+        public async Task<IManagerResult> StopNuitAsync(ulong animeId, DateTime playTime)
+        {
+            var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
+
+            if (currentNuit != null)
+            {
+                await _nuitContext.StopNuitAsync(animeId, playTime);
+            }
+            else
+            {
+                return ManagerResult.FromErrorMessage(_msg.NoRunningNuitFound);
+            }
+
+            return ManagerResult.Default;
+        }
     }
 }

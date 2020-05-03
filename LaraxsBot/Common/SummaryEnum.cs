@@ -20,5 +20,6 @@ namespace LaraxsBot.Common
         ConfigGetVoteChannel,
         ConfigSetCommandPrefix,
         ConfigGetCommandPrefix,
+        NuitStaffStatus,
     }
 }

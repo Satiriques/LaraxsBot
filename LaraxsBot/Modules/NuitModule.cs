@@ -48,7 +48,8 @@ namespace LaraxsBot.Modules
 
             if(nuit != null)
             {
-                await _embedService.CreateEmbedAsync(nuit);
+                var embed = await _embedService.CreateEmbedAsync(nuit);
+                await ReplyAsync(embed: embed);
             }
             else
             {

@@ -19,5 +19,6 @@ namespace LaraxsBot.Services.Interfaces
         Task<IEnumerable<IAnimeChannelVote>> GetChannelVotesAsync();
         Task<IAnimeChannelVote?> GetVoteFromEmbedAsync(IMessage message);
         Task<Embed> CreateEmbedAsync(NuitModel nuit);
+        Embed CreateChoiceEmbed<TEmbed>();
     }
 }

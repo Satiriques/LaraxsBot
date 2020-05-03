@@ -165,7 +165,6 @@ namespace LaraxsBot.Services.Classes
                         Value = $"https://myanimelist.net/anime/{nuit.WinnerAnimeId}",
                     },
                 }
-
             };
 
             if(animeInfo != null)
@@ -175,7 +174,29 @@ namespace LaraxsBot.Services.Classes
                     Name = "Genres:",
                     Value = string.Join(", ", animeInfo.Genres),
                 });
+                embed.ThumbnailUrl = animeInfo.ImageUrl;
             }
+
+            if(nuit.PlayTime != default)
+            {
+                embed.Footer = new EmbedFooterBuilder()
+                {
+                    Text = $"Date: {nuit.PlayTime:dd/MM/yy}, Heure: {nuit.PlayTime:H:mm}",
+                };
+            }
+
+            return embed.Build();
+        }
+
+        public Embed CreateChoiceEmbed<TEnum>()
+        {
+            var enums = Enum.GetValues(typeof(TEnum)).Cast<TEnum>().ToArray();
+
+            var enumLine = enums.Select(x => $"{Array.IndexOf(enums, x)}. {x}");
+
+            var embed = new EmbedBuilder()
+                                .WithTitle("Écrire le numéro qui correspond à l'action désiré.")
+                                .WithDescription(string.Join(Environment.NewLine, enumLine));
 
             return embed.Build();
         }

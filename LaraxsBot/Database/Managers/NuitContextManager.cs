@@ -109,5 +109,18 @@ namespace LaraxsBot.Database.Managers
                 await db.SaveChangesAsync();
             }
         }
+
+        public async Task StopNuitAsync(ulong animeId, DateTime playTime)
+        {
+            using var db = new NuitContext();
+            var nuit = await db.Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
+            if (nuit != null)
+            {
+                nuit.IsRunning = false;
+                nuit.WinnerAnimeId = animeId;
+                nuit.PlayTime = playTime;
+                await db.SaveChangesAsync();
+            }
+        }
     }
 }
