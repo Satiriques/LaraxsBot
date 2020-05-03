@@ -31,12 +31,6 @@ namespace LaraxsBot.Database.Managers
             }
         }
 
-        public void EnsureDeleted()
-        {
-            using var db = new NuitContext();
-            db.Database.EnsureDeleted();
-        }
-
         public async Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
         {
             using var db = new NuitContext();
@@ -53,28 +47,41 @@ namespace LaraxsBot.Database.Managers
             await db.SaveChangesAsync();
         }
 
+        public async Task CreateNuitAsync(ulong creatorId)
+        {
+            using var db = new NuitContext();
+
+            var nuit = new NuitModel()
+            {
+                CreatorId = creatorId,
+                CreationDate = DateTime.Now,
+            };
+
+            db.Nuits.Add(nuit);
+            await db.SaveChangesAsync();
+        }
+
+        public void EnsureDeleted()
+        {
+            using var db = new NuitContext();
+            db.Database.EnsureDeleted();
+        }
         public async Task<List<NuitModel>> GetAllNuitsAsync()
         {
             using var db = new NuitContext();
             return await db.Nuits.AsQueryable().ToListAsync();
         }
 
+        public async Task<NuitModel?> GetLastEndedAnimeAsync()
+        {
+            using var db = new NuitContext();
+            return await db.Nuits.AsQueryable().Where(x => x.WinnerAnimeId != 0).OrderByDescending(x => x.PlayTime).FirstOrDefaultAsync();
+        }
+
         public async Task<NuitModel?> GetStillRunningNuitAsync()
         {
             using var db = new NuitContext();
             return await db.Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
-        }
-
-        public async Task StopNuitAsync(ulong animeId)
-        {
-            using var db = new NuitContext();
-            var nuit = await db.Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
-            if (nuit != null)
-            {
-                nuit.IsRunning = false;
-                nuit.WinnerAnimeId = animeId;
-                await db.SaveChangesAsync();
-            }
         }
 
         public async Task StartNuitAsync(ulong id)
@@ -91,10 +98,16 @@ namespace LaraxsBot.Database.Managers
             }
         }
 
-        public async Task<NuitModel?> GetLastEndedAnimeAsync()
+        public async Task StopNuitAsync(ulong animeId)
         {
             using var db = new NuitContext();
-            return await db.Nuits.AsQueryable().Where(x => x.WinnerAnimeId != 0).OrderByDescending(x => x.PlayTime).FirstOrDefaultAsync();
+            var nuit = await db.Nuits.AsQueryable().SingleOrDefaultAsync(x => x.IsRunning);
+            if (nuit != null)
+            {
+                nuit.IsRunning = false;
+                nuit.WinnerAnimeId = animeId;
+                await db.SaveChangesAsync();
+            }
         }
     }
 }
