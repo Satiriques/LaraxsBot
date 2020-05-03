@@ -37,6 +37,17 @@ namespace LaraxsBot.Modules.StaffModules
             }
         }
 
+        [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
+        [Command("create")]
+        public async Task CreateNuitAsync()
+        {
+            var result = await _nuitManagerService.CreateNuitAsync(Context.User.Id);
+            if (!result.Success)
+            {
+                await ReplyAsync(result.Message);
+            }
+        }
+
         [SummaryFromEnum(SummaryEnum.NuitStaffStart)]
         [Command("start")]
         public async Task StartNuitAsync(ulong nuitId)

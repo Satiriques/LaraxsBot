@@ -17,9 +17,8 @@ namespace LaraxsBot.Services.DatabaseFacade
     /// </summary>
     public class NuitService : INuitService
     {
-        private readonly INuitContextManager _nuitContext;
         private readonly IMessageService _msg;
-
+        private readonly INuitContextManager _nuitContext;
         public NuitService(INuitContextManager nuitContext,
             IMessageService messageService)
         {
@@ -42,6 +41,31 @@ namespace LaraxsBot.Services.DatabaseFacade
 
             return ManagerResult.Default;
         }
+
+        public async Task<IManagerResult> CreateNuitAsync(ulong creatorId)
+        {
+            var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
+
+            if (currentNuit == null)
+            {
+                await _nuitContext.CreateNuitAsync(creatorId);
+            }
+            else
+            {
+                return ManagerResult.FromErrorMessage(_msg.NuitAlreadyRunning);
+            }
+
+            return ManagerResult.Default;
+        }
+
+        public async Task<int> GetNumberOfNuitAsync()
+        {
+            var nuits = await _nuitContext.GetAllNuitsAsync();
+            return nuits.Count();
+        }
+
+        public async Task<NuitModel?> GetRunningNuitAsync()
+            => await _nuitContext.GetStillRunningNuitAsync();
 
         public async Task<IManagerResult> StartNuitAsync(ulong nuitId)
         {
@@ -68,13 +92,6 @@ namespace LaraxsBot.Services.DatabaseFacade
 
             return ManagerResult.Default;
         }
-
-        public async Task<int> GetNumberOfNuitAsync()
-        {
-            var nuits = await _nuitContext.GetAllNuitsAsync();
-            return nuits.Count();
-        }
-
         public async Task<IManagerResult> StopNuitAsync(ulong animeId)
         {
             var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
@@ -90,8 +107,5 @@ namespace LaraxsBot.Services.DatabaseFacade
 
             return ManagerResult.Default;
         }
-
-        public async Task<NuitModel?> GetRunningNuitAsync()
-            => await _nuitContext.GetStillRunningNuitAsync();
     }
 }

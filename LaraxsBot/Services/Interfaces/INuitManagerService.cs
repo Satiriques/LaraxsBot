@@ -18,5 +18,6 @@ namespace LaraxsBot.Services.Interfaces
         Task<IManagerResult> StopNuitAsync(ulong animeId);
         Task<IManagerResult> StartNuitAsync(ulong nuitId);
         Task<NuitModel?> GetRunningNuitAsync();
+        Task<IManagerResult> CreateNuitAsync(ulong id);
     }
 }
