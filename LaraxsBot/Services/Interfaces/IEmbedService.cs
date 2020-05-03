@@ -1,4 +1,5 @@
 ﻿using Discord;
+using LaraxsBot.Database.Models;
 using MalParser.Interfaces;
 using System;
 using System.Collections.Generic;
@@ -17,5 +18,6 @@ namespace LaraxsBot.Services.Interfaces
         Embed CreateVoteEmbed(IAnime anime, ulong id, IGuildUser user);
         Task<IEnumerable<IAnimeChannelVote>> GetChannelVotesAsync();
         Task<IAnimeChannelVote?> GetVoteFromEmbedAsync(IMessage message);
+        Task<Embed> CreateEmbedAsync(NuitModel nuit);
     }
 }

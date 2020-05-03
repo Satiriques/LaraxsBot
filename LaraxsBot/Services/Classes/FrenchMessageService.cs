@@ -18,18 +18,20 @@ namespace LaraxsBot.Services.Classes
         public string StaffOnlyCommand
             => "Cette commande peut seulement être utilisé par un membre du staff.";
 
+        public string NextNuitTitle 
+            => "Prochaine nuit de l'animé.";
+
+        public string NoLastAnimeEndedFound
+            => "Aucune ancienne nuit terminé trouvé.";
+
         public string GetCommandPrefixGet(string commandPrefix)
-        {
-            throw new NotImplementedException();
-        }
+            => $"Le préfix de commande est: {commandPrefix}";
 
         public string GetCommandPrefixSet(string prefix)
-        {
-            throw new NotImplementedException();
-        }
+            => $"Le nouveau préfix est: {prefix}";
 
         public string GetHelpInfo(ISelfUser currentUser)
-            => $"Écrire @{currentUser} help <module> pour plus d'information";
+            => $"Écrire @{currentUser} help <commande> pour plus d'information";
 
         public string GetInvalidAnimeMessage(ulong id)
             => $"Aucune anime trouvé avec id: {id}.";
@@ -52,8 +54,18 @@ namespace LaraxsBot.Services.Classes
             {
                 SummaryEnum.Nuit => "Affiche la prochaine nuit de l'animé",
                 SummaryEnum.VoteModule => "Commandes pour un utilisateur normal",
-                SummaryEnum.Info => "Donne les informations de performances.",
+                SummaryEnum.Info => "Donne les informations de performances",
                 SummaryEnum.Propose => "Propose un animé par id pour la nuit de l'animé",
+                SummaryEnum.NuitStaffModule => "Commands pour controler les nuits de l'animé",
+                SummaryEnum.NuitStaffCreate => "Crée une nuit de l'animé",
+                SummaryEnum.NuitStaffStart => "Permet au utilisateur de proposer et voter des animés",
+                SummaryEnum.NuitStaffStop => "Termine une nuit de l'animé",
+                SummaryEnum.NuitStaffHelper => "Permet de gérer les nuits avec une commande interactive",
+                SummaryEnum.ConfigModule => "Module qui permet de changer les configuration",
+                SummaryEnum.ConfigSetVoteChannel => "Défine le canal de vote",
+                SummaryEnum.ConfigGetVoteChannel => "Obtient le canal de vote courant",
+                SummaryEnum.ConfigSetCommandPrefix => "Défine le préfixe des commandes",
+                SummaryEnum.ConfigGetCommandPrefix => "Obtient le préfixe des commandes",
                 _ => "N/A",
             };
         }

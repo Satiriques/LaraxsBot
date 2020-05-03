@@ -5,6 +5,8 @@ using LaraxsBot.Services.Interfaces;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -15,7 +17,7 @@ namespace LaraxsBot.Modules
     [Group("help"), Name("Help")]
     public class HelpModule : ModuleBase<SocketCommandContext>
     {
-        private readonly CommandService _commands;
+        private readonly CommandService _commandService;
         private readonly IConfig _config;
         private readonly IMessageService _msg;
         private readonly IServiceProvider _provider;
@@ -25,7 +27,7 @@ namespace LaraxsBot.Modules
             IConfig config,
             IMessageService msg)
         {
-            _commands = commands;
+            _commandService = commands;
             _config = config;
             _msg = msg;
             _provider = provider;
@@ -49,7 +51,7 @@ namespace LaraxsBot.Modules
         public async Task HelpAsync()
         {
             string prefix = _config.CommandPrefix ?? $"@{Context.Client.CurrentUser} ";
-            var modules = _commands.Modules.Where(x => !string.IsNullOrWhiteSpace(GetSummary(x)));
+            var modules = _commandService.Modules.Where(x => !string.IsNullOrWhiteSpace(GetSummary(x)));
 
             _msg.GetHelpInfo(Context.Client.CurrentUser);
 
@@ -79,68 +81,26 @@ namespace LaraxsBot.Modules
         }
 
         [Command]
-        public async Task HelpAsync([Remainder] string moduleName)
+        public async Task HelpAsync([Remainder] string moduleOrCommandName)
         {
-            string prefix = _config.CommandPrefix ?? $"@{Context.Client.CurrentUser.Username} ";
-            var module = _commands.Modules.FirstOrDefault(x => string.Equals(x.Name, moduleName, StringComparison.OrdinalIgnoreCase));
-
-            if (module == null)
+            if (!await CheckForModulesAsync(moduleOrCommandName) && !await CheckForCommandsAsync(moduleOrCommandName))
             {
-                //chercher pour une commande
-                var command = _commands.Commands.Where(x => x.Aliases.Contains(moduleName));
 
-                if (!command.Any())
-                {
-                    string test = _msg.GetModuleOrCommandNotExists(moduleName);
-                    await ReplyAsync();
-                    return;
-                }
-
-                var cmdBuilder = new EmbedBuilder();
-
-                var aliases = new List<string>();
-                foreach (var overload in command)
-                {
-                    var result = await overload.CheckPreconditionsAsync(Context, _provider);
-                    if (result.IsSuccess)
-                    {
-                        var sbuilder = new StringBuilder()
-                            .Append(prefix)
-                            .Append(overload.Aliases[0]);
-
-                        foreach (var parameter in overload.Parameters)
-                        {
-                            string p = parameter.Name;
-
-                            if (parameter.IsRemainder)
-                                p += "...";
-                            if (parameter.IsOptional)
-                                p = $"[{p}]";
-                            else
-                                p = $"<{p}>";
-
-                            sbuilder.Append(' ').Append(p);
-                        }
-
-                        cmdBuilder.AddField(sbuilder.ToString(), overload.Remarks ?? GetSummary(overload));
-                    }
-                    aliases.AddRange(overload.Aliases);
-                }
-
-                cmdBuilder.WithFooter(x => x.Text = $"Alias: {string.Join(", ", aliases)}");
-
-                await ReplyAsync("", embed: cmdBuilder.Build());
-                return;
             }
+        }
 
-            var commands = module.Commands.Where(x => !string.IsNullOrWhiteSpace(GetSummary(x)))
+        private async Task<bool> CheckForModulesAsync(string moduleName)
+        {
+            string prefix = _config.CommandPrefix ?? $"@{Context.Client.CurrentUser.Username}";
+            var modules = _commandService.Modules.Where(x => string.Equals(x.Name, moduleName, StringComparison.OrdinalIgnoreCase));
+
+            var commands = modules.SelectMany(x => x.Commands).Where(x => !string.IsNullOrWhiteSpace(GetSummary(x)))
                                  .GroupBy(x => x.Name)
                                  .Select(x => x.First());
 
             if (!commands.Any())
             {
-                await ReplyAsync($"Le module `{module.Name}` n'a pas de commande disponible.");
-                return;
+                return false;
             }
 
             var builder = new EmbedBuilder()
@@ -158,6 +118,55 @@ namespace LaraxsBot.Modules
             }
 
             await ReplyAsync("", embed: builder.Build());
+            return true;
+        }
+
+        private async Task<bool> CheckForCommandsAsync(string commandName)
+        {
+            string prefix = _config.CommandPrefix ?? $"@{Context.Client.CurrentUser.Username}";
+
+            var commands = _commandService.Commands.Where(x => x.Aliases.Contains(commandName));
+
+            if (!commands.Any())
+            {
+                return false;
+            }
+
+            var builder = new EmbedBuilder();
+            var aliases = new List<string>();
+
+            foreach (var command in commands)
+            {
+                var result = await command.CheckPreconditionsAsync(Context, _provider);
+
+
+                if (result.IsSuccess)
+                {
+                    var sbuilder = new StringBuilder()
+                        .Append(prefix + command.Aliases.First());
+
+                    foreach (var parameter in command.Parameters)
+                    {
+                        string p = parameter.Name;
+
+                        if (parameter.IsRemainder)
+                            p += "...";
+                        if (parameter.IsOptional)
+                            p = $"[{p}]";
+                        else
+                            p = $"<{p}>";
+
+                        sbuilder.Append(" " + p);
+                    }
+
+                    builder.AddField(sbuilder.ToString(), command.Remarks ?? GetSummary(command));
+                }
+                aliases.AddRange(command.Aliases);
+
+            }
+            builder.WithFooter(x => x.Text = $"Alias: {string.Join(", ", aliases)}");
+            await ReplyAsync("", embed: builder.Build());
+            return true;
         }
     }
 }

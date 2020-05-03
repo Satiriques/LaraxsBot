@@ -2,33 +2,35 @@
 using Discord.Commands;
 using LaraxsBot.Common;
 using LaraxsBot.Database.Interfaces;
-using LaraxsBot.Services;
 using LaraxsBot.Services.Interfaces;
-using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
     [SummaryFromEnum(SummaryEnum.VoteModule)]
     [Group("nuit")]
-    public class VoteModule : ModuleBase<SocketCommandContext>
+    [Name(nameof(NuitModule))]
+    public class NuitModule : ModuleBase<SocketCommandContext>
     {
         private readonly IVoteService _service;
         private readonly IEmbedService _embedService;
         private readonly INuitContextManager _nuitDb;
+        private readonly IMessageService _messageService;
 
-        public VoteModule(IVoteService service, 
+        public NuitModule(IVoteService service,
             IEmbedService embedService,
-            INuitContextManager nuitDb)
+            INuitContextManager nuitDb,
+            IMessageService messageService)
         {
             _service = service;
             _embedService = embedService;
             _nuitDb = nuitDb;
+            _messageService = messageService;
         }
 
+        [SummaryFromEnum(SummaryEnum.Propose)]
         [Command("propose")]
         [Alias("p")]
-        [SummaryFromEnum(SummaryEnum.Propose)]
         public async Task ProposeAsync(ulong animeId)
         {
             var result = await _service.ProposeAsync(animeId, (IGuildUser)Context.User);
@@ -42,9 +44,16 @@ namespace LaraxsBot.Modules
         [Command("")]
         public async Task NuitAsync()
         {
-            await _nuitDb.GetLastEndedAnimeAsync();
+            var nuit = await _nuitDb.GetLastEndedAnimeAsync();
 
-            //_embedService.CreateEmbed()
+            if(nuit != null)
+            {
+                await _embedService.CreateEmbedAsync(nuit);
+            }
+            else
+            {
+                await ReplyAsync(_messageService.NoLastAnimeEndedFound);
+            }
         }
     }
 }

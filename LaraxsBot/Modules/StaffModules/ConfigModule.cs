@@ -1,15 +1,14 @@
 ﻿using Discord;
 using Discord.Commands;
+using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules.StaffModules
 {
+    [SummaryFromEnum(SummaryEnum.ConfigModule)]
     [Group("config")]
-    [Name("Config")]
+    [Name(nameof(ConfigModule))]
     public class ConfigModule : ModuleBase
     {
         private readonly IMessageService _msg;
@@ -22,6 +21,7 @@ namespace LaraxsBot.Modules.StaffModules
             _config = config;
         }
 
+        [SummaryFromEnum(SummaryEnum.ConfigSetVoteChannel)]
         [Command("votechannel")]
         public async Task SetVoteChannelIdAsync(ITextChannel textChannel)
         {
@@ -29,19 +29,22 @@ namespace LaraxsBot.Modules.StaffModules
             await ReplyAsync(_msg.GetVoteChannelSet(textChannel.Id));
         }
 
+        [SummaryFromEnum(SummaryEnum.ConfigGetVoteChannel)]
         [Command("votechannel")]
         public async Task GetVoteChannelIdAsync()
         {
             await ReplyAsync(_msg.GetVoteChannelGet(_config.VoteChannelId));
         }
 
+        [SummaryFromEnum(SummaryEnum.ConfigSetCommandPrefix)]
         [Command("commandprefix")]
         public async Task CommandPrefixAsync(string prefix)
         {
             _config.SetPrefix(prefix);
             await ReplyAsync(_msg.GetCommandPrefixSet(prefix));
         }
-
+        
+        [SummaryFromEnum(SummaryEnum.ConfigGetCommandPrefix)]
         [Command("commandprefix")]
         public async Task CommandPrefixAsync()
         {

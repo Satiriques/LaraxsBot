@@ -104,7 +104,14 @@ namespace LaraxsBot
 
             if (!result.IsSuccess)
             {
-                await context.Channel.SendMessageAsync(result.ErrorReason);
+                if(result.Error == CommandError.UnknownCommand)
+                {
+                    await context.Message.AddReactionAsync(new Emoji("❓"));
+                }
+                else
+                {
+                    await context.Channel.SendMessageAsync(result.ErrorReason);
+                }
             }
             // Keep in mind that result does not indicate a return value
             // rather an object stating if the command executed successfully.

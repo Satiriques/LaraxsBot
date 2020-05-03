@@ -27,7 +27,6 @@ namespace LaraxsBot.Modules
         public async Task TestAsync()
         {
             await ReplyAsync("test");
-            var channel = Context.Guild.GetChannel(1) as ITextChannel;
         }
 
         [Command("testanime")]

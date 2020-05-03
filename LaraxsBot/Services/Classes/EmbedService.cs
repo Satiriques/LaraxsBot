@@ -9,6 +9,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Interfaces;
+using LaraxsBot.Database.Models;
+using MalParser;
 
 namespace LaraxsBot.Services.Classes
 {
@@ -20,13 +22,15 @@ namespace LaraxsBot.Services.Classes
         private readonly INuitContextManager _nuitContext;
         private readonly IVoteContext _voteContext;
         private readonly ISuggestionContext _suggestionContext;
+        private readonly MalApi _malApi;
 
-        public EmbedService(IMessageService messageService, 
+        public EmbedService(IMessageService messageService,
             IConfig config, 
             DiscordSocketClient client,
             INuitContextManager nuitContext,
             IVoteContext voteContext,
-            ISuggestionContext suggestionContext)
+            ISuggestionContext suggestionContext,
+            MalApi malApi)
         {
             _messageService = messageService;
             _config = config;
@@ -34,6 +38,7 @@ namespace LaraxsBot.Services.Classes
             _nuitContext = nuitContext;
             _voteContext = voteContext;
             _suggestionContext = suggestionContext;
+            _malApi = malApi;
         }
 
         public Embed CreateEmbed(IAnime anime)
@@ -143,6 +148,36 @@ namespace LaraxsBot.Services.Classes
                 x.Embed = (Embed)tempEmbed;
                 x.Content = tempContent;
             });
+        }
+
+        public async Task<Embed> CreateEmbedAsync(NuitModel nuit)
+        {
+            var animeInfo = await _malApi.GetAnimeAsync(nuit.WinnerAnimeId);
+
+            var embed = new EmbedBuilder()
+            {
+                Description = _messageService.NextNuitTitle,
+                Fields = new List<EmbedFieldBuilder>()
+                {
+                    new EmbedFieldBuilder()
+                    {
+                        Name = animeInfo?.Title ?? $"Anime Id = {nuit.WinnerAnimeId}",
+                        Value = $"https://myanimelist.net/anime/{nuit.WinnerAnimeId}",
+                    },
+                }
+
+            };
+
+            if(animeInfo != null)
+            {
+                embed.Fields.Add(new EmbedFieldBuilder()
+                {
+                    Name = "Genres:",
+                    Value = string.Join(", ", animeInfo.Genres),
+                });
+            }
+
+            return embed.Build();
         }
     }
 }

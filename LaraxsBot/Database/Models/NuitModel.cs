@@ -13,9 +13,7 @@ namespace LaraxsBot.Database.Models
         public ulong CreatorId { get; set; }
         [Required]
         public DateTime CreationDate { get; set; }
-        [Required]
         public DateTime StartTime { get; set; }
-        [Required]
         public DateTime StopTime { get; set; }
         public ulong WinnerAnimeId { get; set; }
         public DateTime PlayTime { get; set; }

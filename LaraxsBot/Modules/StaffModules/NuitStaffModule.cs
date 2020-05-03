@@ -7,7 +7,10 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules.StaffModules
 {
+    [SummaryFromEnum(SummaryEnum.NuitStaffModule)]
     [RequireStaff]
+    [Group("nuit")]
+    [Name(nameof(NuitStaffModule))]
     public class NuitStaffModule : ModuleBase<SocketCommandContext>
     {
         private readonly INuitService _nuitManagerService;
@@ -23,7 +26,8 @@ namespace LaraxsBot.Modules.StaffModules
             _msg = messageService;
         }
 
-        [Command("createnuit")]
+        [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
+        [Command("create")]
         public async Task CreateNuitAsync(DateTime start, DateTime end)
         {
             var result = await _nuitManagerService.CreateNuitAsync(start, end, Context.User.Id);
@@ -33,7 +37,8 @@ namespace LaraxsBot.Modules.StaffModules
             }
         }
 
-        [Command("startnuit")]
+        [SummaryFromEnum(SummaryEnum.NuitStaffStart)]
+        [Command("start")]
         public async Task StartNuitAsync(ulong nuitId)
         {
             var result = await _nuitManagerService.StartNuitAsync(nuitId);
@@ -43,7 +48,8 @@ namespace LaraxsBot.Modules.StaffModules
             }
         }
 
-        [Command("stopnuit")]
+        [SummaryFromEnum(SummaryEnum.NuitStaffStop)]
+        [Command("stop")]
         public async Task StopNuitAsync(ulong animeId)
         {
             var result = await _nuitManagerService.StopNuitAsync(animeId);
@@ -62,7 +68,8 @@ namespace LaraxsBot.Modules.StaffModules
             }
         }
 
-        [Command("nuit helper")]
+        [SummaryFromEnum(SummaryEnum.NuitStaffHelper)]
+        [Command("helper")]
         public async Task NuitHelperAsync()
         {
             var nuit = await _nuitManagerService.GetRunningNuitAsync();

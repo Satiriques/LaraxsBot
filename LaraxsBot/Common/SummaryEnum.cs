@@ -10,5 +10,15 @@ namespace LaraxsBot.Common
         VoteModule,
         Info,
         Propose,
+        NuitStaffModule,
+        NuitStaffCreate,
+        NuitStaffStart,
+        NuitStaffStop,
+        NuitStaffHelper,
+        ConfigModule,
+        ConfigSetVoteChannel,
+        ConfigGetVoteChannel,
+        ConfigSetCommandPrefix,
+        ConfigGetCommandPrefix,
     }
 }
