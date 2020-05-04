@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
 using System;
@@ -30,8 +31,11 @@ namespace LaraxsBot.Services.Classes
         public string GetCommandPrefixSet(string prefix)
             => $"Le nouveau préfix est: {prefix}";
 
-        public string GetHelpInfo(ISelfUser currentUser)
+        public string GetHelpInfoCommand(ISelfUser currentUser)
             => $"Écrire @{currentUser} help <commande> pour plus d'information";
+
+        public string GetHelpInfoModule(SocketSelfUser currentUser)
+            => $"Écrire @{currentUser} help <module> pour plus d'information";
 
         public string GetInvalidAnimeMessage(ulong id)
             => $"Aucune anime trouvé avec id: {id}.";

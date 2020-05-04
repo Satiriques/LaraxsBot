@@ -1,4 +1,5 @@
 ﻿using Discord;
+using Discord.WebSocket;
 using LaraxsBot.Common;
 using System;
 using System.Collections.Generic;
@@ -21,12 +22,13 @@ namespace LaraxsBot.Services.Interfaces
         string GetVoteChannelGet(ulong id);
         string GetNoNuitFoundWithId(ulong nuitId);
         string GetNuitStopped(ulong animeId);
-        string GetHelpInfo(ISelfUser currentUser);
+        string GetHelpInfoCommand(ISelfUser currentUser);
         string GetModuleOrCommandNotExists(string moduleName);
         string GetSummaryFromEnum(SummaryEnum @enum);
         string GetCommandPrefixSet(string prefix);
         string GetCommandPrefixGet(string commandPrefix);
         string GetRoleSet(ulong id);
         string GetRoleGet(ulong voteChannelId);
+        string GetHelpInfoModule(SocketSelfUser currentUser);
     }
 }

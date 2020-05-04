@@ -53,10 +53,8 @@ namespace LaraxsBot.Modules
             string prefix = _config.CommandPrefix ?? $"@{Context.Client.CurrentUser} ";
             var modules = _commandService.Modules.Where(x => !string.IsNullOrWhiteSpace(GetSummary(x)));
 
-            _msg.GetHelpInfo(Context.Client.CurrentUser);
-
             var builder = new EmbedBuilder()
-                .WithFooter(x => x.Text = _msg.GetHelpInfo(Context.Client.CurrentUser));
+                .WithFooter(x => x.Text = _msg.GetHelpInfoModule(Context.Client.CurrentUser));
 
             foreach (var module in modules)
             {
@@ -104,7 +102,7 @@ namespace LaraxsBot.Modules
             }
 
             var builder = new EmbedBuilder()
-                .WithFooter(x => x.Text = _msg.GetHelpInfo(Context.Client.CurrentUser));
+                .WithFooter(x => x.Text = _msg.GetHelpInfoCommand(Context.Client.CurrentUser));
 
             foreach (var command in commands)
             {
