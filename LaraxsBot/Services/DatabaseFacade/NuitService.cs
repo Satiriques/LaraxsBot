@@ -58,8 +58,17 @@ namespace LaraxsBot.Services.DatabaseFacade
             return ManagerResult.Default;
         }
 
+        public async Task ReplaceAsync(NuitModel nuit)
+            => await _nuitContext.ReplaceNuitAsync(nuit);
+
+        public async Task<bool> DoesNuitExistsAsync(ulong id)
+            => await _nuitContext.DoesNuitExistsAsync(id);
+
         public async Task<List<NuitModel>> GetAllNuitsAsync()
             => await _nuitContext.GetAllNuitsAsync();
+
+        public async Task<NuitModel?> GetNuitAsync(ulong nuitId)
+            => await _nuitContext.GetNuitAsync(nuitId);
 
         public async Task<int> GetNumberOfNuitAsync()
         {

@@ -21,5 +21,8 @@ namespace LaraxsBot.Services.Interfaces
         Task<NuitModel?> GetRunningNuitAsync();
         Task<IManagerResult> CreateNuitAsync(ulong id);
         Task<List<NuitModel>> GetAllNuitsAsync();
+        Task<bool> DoesNuitExistsAsync(ulong id);
+        Task<NuitModel?> GetNuitAsync(ulong nuitId);
+        Task ReplaceAsync(NuitModel nuit);
     }
 }

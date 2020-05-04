@@ -61,6 +61,13 @@ namespace LaraxsBot.Database.Managers
             await db.SaveChangesAsync();
         }
 
+        public Task<bool> DoesNuitExistsAsync(ulong id)
+        {
+            using var db = new NuitContext();
+
+            return db.Nuits.AsQueryable().AnyAsync(x => x.NuitId == id);
+        }
+
         public void EnsureDeleted()
         {
             using var db = new NuitContext();
@@ -76,6 +83,25 @@ namespace LaraxsBot.Database.Managers
         {
             using var db = new NuitContext();
             return await db.Nuits.AsQueryable().Where(x => x.WinnerAnimeId != 0).OrderByDescending(x => x.PlayTime).FirstOrDefaultAsync();
+        }
+
+        public async Task<NuitModel?> GetNuitAsync(ulong nuitId)
+        {
+            using var db = new NuitContext();
+            return await db.Nuits.AsQueryable().FirstOrDefaultAsync(x => x.NuitId == nuitId);
+        }
+
+        public async Task ReplaceNuitAsync(NuitModel model)
+        {
+            using var db = new NuitContext();
+            var nuit = await GetNuitAsync(model.NuitId);
+            if(nuit != null)
+            {
+                db.Nuits.Remove(nuit);
+            }
+
+            await db.Nuits.AddAsync(model);
+            await db.SaveChangesAsync();
         }
 
         public async Task<NuitModel?> GetStillRunningNuitAsync()

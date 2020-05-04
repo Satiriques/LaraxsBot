@@ -2,8 +2,11 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using LaraxsBot.Common;
+using LaraxsBot.Database.Models;
 using LaraxsBot.Services.Interfaces;
+using Newtonsoft.Json;
 using System;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules.StaffModules
@@ -14,6 +17,11 @@ namespace LaraxsBot.Modules.StaffModules
     [Name(nameof(NuitStaffModule))]
     public class NuitStaffModule : InteractiveBase<SocketCommandContext>
     {
+        private enum NuitProperties
+        {
+            PlayTime,
+            WinnerAnimeId
+        }
         private readonly INuitService _nuitManagerService;
         private readonly IConfig _config;
         private readonly IMessageService _msg;
@@ -34,14 +42,59 @@ namespace LaraxsBot.Modules.StaffModules
         [Command("list")]
         public async Task ListNuitAsync()
         {
-            var nuits = _nuitManagerService.GetAllNuitsAsync();
+            var nuits = await _nuitManagerService.GetAllNuitsAsync();
+            var json = JsonConvert.SerializeObject(nuits);
+            var file = Path.GetTempFileName();
+            File.WriteAllText(file, json);
+            await Context.Channel.SendFileAsync(file);
+            File.Delete(file);
         }
 
         [SummaryFromEnum(SummaryEnum.NuitStaffEdit)]
-        [Command("edit")]
-        public async Task EditNuitAsync()
+        [Command("edit", RunMode = RunMode.Async)]
+        public async Task EditNuitAsync(ulong nuitId)
         {
+            if (await _nuitManagerService.GetNuitAsync(nuitId) is NuitModel nuit)
+            {
+                var embed = _embedService.CreateChoiceEmbed<NuitProperties>();
+                await ReplyAsync(embed: embed);
+                var response = await NextMessageAsync(timeout: TimeSpan.FromMinutes(2));
+                if (int.TryParse(response.Content, out int index) && Enum.IsDefined(typeof(NuitProperties), index))
+                {
+                    switch ((NuitProperties)index)
+                    {
+                        case NuitProperties.PlayTime:
+                            await ReplyAsync("Entrer la nouvelle valeur:");
+                            response = await NextMessageAsync(timeout: TimeSpan.FromMinutes(2));
+                            if (DateTime.TryParse(response.Content, out var newDate))
+                            {
+                                nuit.PlayTime = newDate;
+                                await _nuitManagerService.ReplaceAsync(nuit);
+                                await Context.Message.AddReactionAsync(new Emoji("👍"));
+                            }
+                            else
+                            {
+                                await Context.Message.AddReactionAsync(new Emoji("👎"));
+                            }
 
+                            break;
+                        case NuitProperties.WinnerAnimeId:
+                            await ReplyAsync("Entrer la nouvelle valeur:");
+                            response = await NextMessageAsync(timeout: TimeSpan.FromMinutes(2));
+                            if (ulong.TryParse(response.Content, out var winnerAnimeId))
+                            {
+                                nuit.WinnerAnimeId = winnerAnimeId;
+                                await _nuitManagerService.ReplaceAsync(nuit);
+                                await Context.Message.AddReactionAsync(new Emoji("👍"));
+                            }
+                            else
+                            {
+                                await Context.Message.AddReactionAsync(new Emoji("👎"));
+                            }
+                            break;
+                    }
+                }
+            }
         }
 
         [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
