@@ -72,6 +72,9 @@ namespace LaraxsBot.Services.Classes
                 SummaryEnum.ConfigGetVoteChannel => "Obtient le canal de vote courant",
                 SummaryEnum.ConfigSetCommandPrefix => "Défine le préfixe des commandes",
                 SummaryEnum.ConfigGetCommandPrefix => "Obtient le préfixe des commandes",
+                SummaryEnum.NuitStaffStatus => "Affiche le status de la nuit courante",
+                SummaryEnum.NuitStaffEdit => "Permet d'éditer une nuit",
+                SummaryEnum.NuitStaffList => "Liste toutes les nuits",
                 _ => "N/A",
             };
         }
