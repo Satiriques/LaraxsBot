@@ -58,10 +58,13 @@ namespace LaraxsBot.Services.DatabaseFacade
             return ManagerResult.Default;
         }
 
+        public async Task<List<NuitModel>> GetAllNuitsAsync()
+            => await _nuitContext.GetAllNuitsAsync();
+
         public async Task<int> GetNumberOfNuitAsync()
         {
             var nuits = await _nuitContext.GetAllNuitsAsync();
-            return nuits.Count();
+            return nuits.Count;
         }
 
         public async Task<NuitModel?> GetRunningNuitAsync()

@@ -30,6 +30,20 @@ namespace LaraxsBot.Modules.StaffModules
             _embedService = embedService;
         }
 
+        [SummaryFromEnum(SummaryEnum.NuitStaffList)]
+        [Command("list")]
+        public async Task ListNuitAsync()
+        {
+            var nuits = _nuitManagerService.GetAllNuitsAsync();
+        }
+
+        [SummaryFromEnum(SummaryEnum.NuitStaffEdit)]
+        [Command("edit")]
+        public async Task EditNuitAsync()
+        {
+
+        }
+
         [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
         [Command("create")]
         public async Task CreateNuitAsync(DateTime start, DateTime end)

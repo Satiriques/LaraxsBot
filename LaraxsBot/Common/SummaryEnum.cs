@@ -21,5 +21,7 @@ namespace LaraxsBot.Common
         ConfigSetCommandPrefix,
         ConfigGetCommandPrefix,
         NuitStaffStatus,
+        NuitStaffEdit,
+        NuitStaffList,
     }
 }
