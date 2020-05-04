@@ -42,7 +42,8 @@ namespace LaraxsBot.Modules
                                       $"**Framework:** {GetFramework()}\n" +
                                       $"**Utilisation de mémoire:** {GetMemoryUsage()}\n" +
                                       $"**Latence:** {GetLatency()}\n" +
-                                      $"**Github:** https://github.com/Satiriques/LaraxsBot";
+                                      $"**Github:** https://github.com/Satiriques/LaraxsBot\n" +
+                                      $"**Propriétaire:** {app.Owner.Mention}";
                 await ReplyAsync("", embed: builder.Build());
             }
 

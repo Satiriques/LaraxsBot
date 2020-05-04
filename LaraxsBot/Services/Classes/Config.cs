@@ -6,7 +6,7 @@ namespace LaraxsBot.Services.Classes
 {
     public sealed class Config : IConfig
     {
-        private readonly string? _path;
+        private string? _path;
 
         private Config(string path)
         {
@@ -21,9 +21,17 @@ namespace LaraxsBot.Services.Classes
             if (File.Exists(path))
             {
                 var text = File.ReadAllText(path);
-                return JsonConvert.DeserializeObject<Config>(text);
+                var config = JsonConvert.DeserializeObject<Config>(text);
+                config.SetPath(path);
+
+                return config;
             }
             return new Config(path);
+        }
+
+        internal void SetPath(string path)
+        {
+            _path = path;
         }
 
         public void Save()
@@ -40,6 +48,12 @@ namespace LaraxsBot.Services.Classes
         public void SetPrefix(string prefix)
         {
             CommandPrefix = prefix;
+            Save();
+        }
+
+        public void SetRole(ulong id)
+        {
+            StaffRoleId = id;
             Save();
         }
 

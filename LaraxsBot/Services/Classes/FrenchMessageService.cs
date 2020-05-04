@@ -45,6 +45,12 @@ namespace LaraxsBot.Services.Classes
         public string GetNuitStopped(ulong animeId)
             => $"Le nuit a été fermé avec comme anime gagnant: {animeId}";
 
+        public string GetRoleGet(ulong voteChannelId)
+            => $"Le rôle de staff a comme id: {voteChannelId}";
+
+        public string GetRoleSet(ulong id)
+            => $"Le role de staff a été défini sur l'id: {id}.";
+
         public string GetSuggestionAlreadyExists(ulong animeId)
             => $"L'anime avec id {animeId} a déjà été proposé.";
 

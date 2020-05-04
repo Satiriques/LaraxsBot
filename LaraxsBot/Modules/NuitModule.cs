@@ -38,6 +38,10 @@ namespace LaraxsBot.Modules
             {
                 await ReplyAsync(result.Message);
             }
+            else
+            {
+                await Context.Message.AddReactionAsync(new Emoji("👍"));
+            }
         }
 
         [SummaryFromEnum(SummaryEnum.Nuit)]

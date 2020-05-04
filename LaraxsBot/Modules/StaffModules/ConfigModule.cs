@@ -36,6 +36,21 @@ namespace LaraxsBot.Modules.StaffModules
             await ReplyAsync(_msg.GetVoteChannelGet(_config.VoteChannelId));
         }
 
+        [SummaryFromEnum(SummaryEnum.ConfigSetVoteChannel)]
+        [Command("staffrole")]
+        public async Task SetStaffRoleAsync(IRole role)
+        {
+            _config.SetRole(role.Id);
+            await ReplyAsync(_msg.GetRoleSet(role.Id));
+        }
+
+        [SummaryFromEnum(SummaryEnum.ConfigGetVoteChannel)]
+        [Command("staffrole")]
+        public async Task GetStaffRoleAsync()
+        {
+            await ReplyAsync(_msg.GetRoleGet(_config.StaffRoleId));
+        }
+
         [SummaryFromEnum(SummaryEnum.ConfigSetCommandPrefix)]
         [Command("commandprefix")]
         public async Task CommandPrefixAsync(string prefix)

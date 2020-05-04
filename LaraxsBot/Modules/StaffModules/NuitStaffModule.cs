@@ -39,6 +39,10 @@ namespace LaraxsBot.Modules.StaffModules
             {
                 await ReplyAsync(result.Message);
             }
+            else
+            {
+                await Context.Message.AddReactionAsync(new Emoji("👍"));
+            }
         }
 
         [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
@@ -49,6 +53,10 @@ namespace LaraxsBot.Modules.StaffModules
             if (!result.Success)
             {
                 await ReplyAsync(result.Message);
+            }
+            else
+            {
+                await Context.Message.AddReactionAsync(new Emoji("👍"));
             }
         }
 
@@ -61,6 +69,10 @@ namespace LaraxsBot.Modules.StaffModules
             {
                 await ReplyAsync(result.Message);
             }
+            else
+            {
+                await Context.Message.AddReactionAsync(new Emoji("👍"));
+            }
         }
 
         [SummaryFromEnum(SummaryEnum.NuitStaffStop)]
@@ -72,7 +84,7 @@ namespace LaraxsBot.Modules.StaffModules
 
         [SummaryFromEnum(SummaryEnum.NuitStaffStop)]
         [Command("stop")]
-        public async Task StopNuitAsync(ulong animeId, DateTime playTime)
+        public async Task StopNuitAsync(ulong animeId, [Remainder]DateTime playTime)
         {
             await StopAsync(animeId, playTime);
         }
@@ -88,6 +100,7 @@ namespace LaraxsBot.Modules.StaffModules
                 await channel.DeleteMessagesAsync(messages);
 
                 await ReplyAsync(_msg.GetNuitStopped(animeId));
+                await Context.Message.AddReactionAsync(new Emoji("👍"));
             }
             else
             {
@@ -95,11 +108,11 @@ namespace LaraxsBot.Modules.StaffModules
             }
         }
 
-        [SummaryFromEnum(SummaryEnum.NuitStaffStatus)]
-        [Command("status")]
-        public async Task NuitStatusAsync()
-        {
+        //[SummaryFromEnum(SummaryEnum.NuitStaffStatus)]
+        //[Command("status")]
+        //public async Task NuitStatusAsync()
+        //{
 
-        }
+        //}
     }
 }

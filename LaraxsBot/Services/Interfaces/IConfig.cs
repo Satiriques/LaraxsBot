@@ -10,5 +10,7 @@
         void SetPrefix(string prefix);
 
         string CommandPrefix { get; }
+
+        void SetRole(ulong id);
     }
 }

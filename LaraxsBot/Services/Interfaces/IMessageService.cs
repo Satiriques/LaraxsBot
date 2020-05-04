@@ -26,5 +26,7 @@ namespace LaraxsBot.Services.Interfaces
         string GetSummaryFromEnum(SummaryEnum @enum);
         string GetCommandPrefixSet(string prefix);
         string GetCommandPrefixGet(string commandPrefix);
+        string GetRoleSet(ulong id);
+        string GetRoleGet(ulong voteChannelId);
     }
 }
