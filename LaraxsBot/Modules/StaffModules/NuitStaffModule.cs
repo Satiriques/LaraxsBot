@@ -6,6 +6,8 @@ using LaraxsBot.Database.Models;
 using LaraxsBot.Services.Interfaces;
 using Newtonsoft.Json;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -61,37 +63,26 @@ namespace LaraxsBot.Modules.StaffModules
                 var response = await NextMessageAsync(timeout: TimeSpan.FromMinutes(2));
                 if (int.TryParse(response.Content, out int index) && Enum.IsDefined(typeof(NuitProperties), index))
                 {
-                    switch ((NuitProperties)index)
-                    {
-                        case NuitProperties.PlayTime:
-                            await ReplyAsync("Entrer la nouvelle valeur:");
-                            response = await NextMessageAsync(timeout: TimeSpan.FromMinutes(2));
-                            if (DateTime.TryParse(response.Content, out var newDate))
-                            {
-                                nuit.PlayTime = newDate;
-                                await _nuitManagerService.ReplaceAsync(nuit);
-                                await Context.Message.AddReactionAsync(new Emoji("👍"));
-                            }
-                            else
-                            {
-                                await Context.Message.AddReactionAsync(new Emoji("👎"));
-                            }
+                    var property = (NuitProperties)index;
+                    await ReplyAsync("Entrer la nouvelle valeur:");
+                    response = await NextMessageAsync(timeout: TimeSpan.FromMinutes(2));
+                    var prop = typeof(NuitModel).GetProperty(property.ToString());
 
-                            break;
-                        case NuitProperties.WinnerAnimeId:
-                            await ReplyAsync("Entrer la nouvelle valeur:");
-                            response = await NextMessageAsync(timeout: TimeSpan.FromMinutes(2));
-                            if (ulong.TryParse(response.Content, out var winnerAnimeId))
-                            {
-                                nuit.WinnerAnimeId = winnerAnimeId;
-                                await _nuitManagerService.ReplaceAsync(nuit);
-                                await Context.Message.AddReactionAsync(new Emoji("👍"));
-                            }
-                            else
-                            {
-                                await Context.Message.AddReactionAsync(new Emoji("👎"));
-                            }
-                            break;
+                    if (prop != null)
+                    {
+                        var type = prop.PropertyType;
+                        var converter = TypeDescriptor.GetConverter(type);
+                        try
+                        {
+                            var convertedValue = converter.ConvertFromString(response.Content);
+                            prop.SetValue(nuit, convertedValue);
+                            await _nuitManagerService.ReplaceAsync(nuit);
+                            await response.AddReactionAsync(new Emoji("👍"));
+                        }
+                        catch
+                        {
+                            await response.AddReactionAsync(new Emoji("👎"));
+                        }
                     }
                 }
             }
