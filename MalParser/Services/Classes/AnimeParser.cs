@@ -67,12 +67,8 @@ namespace MalParser.Services.Classes
             => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Source:']")?.NextSibling?.InnerText ?? string.Empty;
 
         private string[] GetGenres(HtmlNode rootNode)
-            => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Genres:']")
-                           .ParentNode
-                           .ChildNodes
-                           .Where(x => !(x is HtmlTextNode))
-                           .Skip(1).Select(x => x.InnerText)
-                           .Distinct()
+            => rootNode.SelectNodes("//span[@class='dark_text' and text() = 'Genres:']/../a")
+                           .Select(x => x.InnerText)
                            .ToArray() ?? new string[] { };
     }
 }
