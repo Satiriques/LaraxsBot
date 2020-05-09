@@ -135,5 +135,9 @@ namespace LaraxsBot.Services.DatabaseFacade
 
             return ManagerResult.Default;
         }
+
+        public async Task<NuitModel?> GetLastCreatedNuitAsync()
+            => await _nuitContext.GetLastCreatedNuitAsync();
+        
     }
 }

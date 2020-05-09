@@ -148,5 +148,11 @@ namespace LaraxsBot.Database.Managers
                 await db.SaveChangesAsync();
             }
         }
+
+        public async Task<NuitModel?> GetLastCreatedNuitAsync()
+        {
+            using var db = new NuitContext();
+            return await db.Nuits.AsQueryable().OrderByDescending(x=>x.CreationDate).FirstOrDefaultAsync();
+        }
     }
 }

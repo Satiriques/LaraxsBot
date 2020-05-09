@@ -129,6 +129,7 @@ namespace LaraxsBot.Services.Classes
                         Value = animeId,
                     },
                 },
+                Color = new Color(0x64FFDA),
             }.Build();
         }
 

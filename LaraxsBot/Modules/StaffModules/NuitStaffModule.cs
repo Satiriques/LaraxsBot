@@ -2,8 +2,12 @@
 using Discord.Addons.Interactive;
 using Discord.Commands;
 using LaraxsBot.Common;
+using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Database.Models;
+using LaraxsBot.Services.Classes;
 using LaraxsBot.Services.Interfaces;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
@@ -28,16 +32,25 @@ namespace LaraxsBot.Modules.StaffModules
         private readonly IConfig _config;
         private readonly IMessageService _msg;
         private readonly IEmbedService _embedService;
+        private readonly IServiceProvider _serviceProvider;
+        private readonly IVoteContext _voteDb;
+        private readonly ISuggestionContext _suggestionDb;
 
         public NuitStaffModule(INuitService nuitManagerService,
             IConfig config,
             IMessageService messageService,
-            IEmbedService embedService)
+            IEmbedService embedService, 
+            IServiceProvider serviceProvider,
+            IVoteContext voteDb,
+            ISuggestionContext suggestionDb)
         {
             _nuitManagerService = nuitManagerService;
             _config = config;
             _msg = messageService;
             _embedService = embedService;
+            _serviceProvider = serviceProvider;
+            _voteDb = voteDb;
+            _suggestionDb = suggestionDb;
         }
 
         [SummaryFromEnum(SummaryEnum.NuitStaffList)]
@@ -166,11 +179,39 @@ namespace LaraxsBot.Modules.StaffModules
             }
         }
 
-        //[SummaryFromEnum(SummaryEnum.NuitStaffStatus)]
-        //[Command("status")]
-        //public async Task NuitStatusAsync()
-        //{
+        [SummaryFromEnum(SummaryEnum.NuitStaffStatus)]
+        [Command("status")]
+        public async Task NuitStatusAsync()
+        {
+            var runningNuit = await _nuitManagerService.GetRunningNuitAsync();
+            var runningNuitString = runningNuit != null ? $"{Format.Bold("Id:")} {runningNuit.NuitId}" : "N/A";
 
-        //}
+            var lastNuit = await _nuitManagerService.GetLastCreatedNuitAsync();
+            var lastNuitString = lastNuit != null ? $"{Format.Bold("Id:")} {lastNuit.NuitId}" : "N/A";
+
+            var embed = new EmbedBuilder()
+                                .WithTitle("Status")
+                                .WithColor(new Color(0xE3B6EB))
+                                .WithThumbnailUrl("https://thumbs.gfycat.com/ColorlessSpryBigmouthbass-small.gif")
+                                .WithFields(new EmbedFieldBuilder()
+                                                   .WithName("Nuit en cours:")
+                                                   .WithValue(runningNuitString)
+                                                   .WithIsInline(true),
+                                            new EmbedFieldBuilder()
+                                                   .WithName("Dernière nuit créée:")
+                                                   .WithValue(lastNuitString)
+                                                   .WithIsInline(true));
+
+            if(runningNuit != null)
+            {
+                var suggestions = await _suggestionDb.GetAllSuggestionsAsync(runningNuit.NuitId);
+                var votes = await _voteDb.GetVotesAsync(runningNuit.NuitId);
+
+                embed.AddField("Nombre de Suggestions: ", suggestions.Count, true);
+                embed.AddField("Nombre de Votes: ", votes.Count, true);
+            }
+
+            await ReplyAsync(embed: embed.Build());
+        }
     }
 }

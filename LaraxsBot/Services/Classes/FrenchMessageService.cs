@@ -79,6 +79,7 @@ namespace LaraxsBot.Services.Classes
                 SummaryEnum.NuitStaffStatus => "Affiche le status de la nuit courante",
                 SummaryEnum.NuitStaffEdit => "Permet d'éditer une nuit",
                 SummaryEnum.NuitStaffList => "Liste toutes les nuits",
+                SummaryEnum.InfoModule => "Commandes pour l'information générale",
                 _ => "N/A",
             };
         }

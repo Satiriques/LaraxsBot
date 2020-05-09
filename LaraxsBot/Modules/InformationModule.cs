@@ -8,9 +8,10 @@ using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules
 {
-    [Group("information"), Name("Information")]
+    [SummaryFromEnum(SummaryEnum.InfoModule)]
+    [Group("information")]
+    [Name("InformationModule")]
     [Alias("info")]
-
     public sealed class InformationModule : ModuleBase<SocketCommandContext>
     {
         private readonly Process _process;

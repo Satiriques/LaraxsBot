@@ -23,5 +23,6 @@ namespace LaraxsBot.Common
         NuitStaffStatus,
         NuitStaffEdit,
         NuitStaffList,
+        InfoModule,
     }
 }
