@@ -2,10 +2,7 @@
 using MalParser.Interfaces;
 using MalParser.Models;
 using MalParser.Services.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Text;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace MalParser.Services.Classes
@@ -70,6 +67,12 @@ namespace MalParser.Services.Classes
             => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Source:']")?.NextSibling?.InnerText ?? string.Empty;
 
         private string[] GetGenres(HtmlNode rootNode)
-            => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Genres:']")?.NextSibling?.NextSibling?.InnerText?.Split(",") ?? new string[] { };
+            => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Genres:']")
+                           .ParentNode
+                           .ChildNodes
+                           .Where(x => !(x is HtmlTextNode))
+                           .Skip(1).Select(x => x.InnerText)
+                           .Distinct()
+                           .ToArray() ?? new string[] { };
     }
 }

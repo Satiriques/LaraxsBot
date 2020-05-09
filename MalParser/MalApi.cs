@@ -13,6 +13,7 @@ namespace MalParser
     {
         private readonly IAnimeParser _animeParser = new AnimeParser();
 
-        public async Task<IAnime?> GetAnimeAsync(ulong id) => await _animeParser.GetAnimeAsync(id).ConfigureAwait(false);
+        public async Task<IAnime?> GetAnimeAsync(ulong id) 
+            => await _animeParser.GetAnimeAsync(id).ConfigureAwait(false);
     }
 }

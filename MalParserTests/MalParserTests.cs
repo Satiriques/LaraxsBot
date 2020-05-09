@@ -34,6 +34,7 @@ Cowboy Bebop's biggest influence has been in the United States, where it premier
 
             */
             Assert.AreEqual(anime.Type, "TV");
+            Assert.AreEqual("Action, Adventure, Comedy, Drama, Sci-Fi, Space", string.Join(", ", anime.Genres));
         }
 
         [TestMethod]
