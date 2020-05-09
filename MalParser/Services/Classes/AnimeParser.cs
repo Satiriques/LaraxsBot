@@ -55,13 +55,17 @@ namespace MalParser.Services.Classes
             => int.Parse(rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Episodes:']")?.NextSibling?.InnerText ?? "0");
 
         private string[] GetProducers(HtmlNode rootNode)
-            => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Producers:']")?.NextSibling?.NextSibling?.InnerText?.Split(",") ?? new string[] { };
+            => rootNode.SelectNodes("//span[@class='dark_text' and text() = 'Producers:']/../a")
+                           .Select(x => x.InnerText)
+                           .ToArray() ?? new string[] { };
 
         private string[] GetLicensors(HtmlNode rootNode)
             => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Licensors:']")?.NextSibling?.NextSibling?.InnerText?.Split(",") ?? new string[] { };
 
         private string[] GetStudios(HtmlNode rootNode)
-            => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Studios:']")?.NextSibling?.NextSibling?.InnerText?.Split(",") ?? new string[] { };
+            => rootNode.SelectNodes("//span[@class='dark_text' and text() = 'Studios:']/../a")
+            .Select(x => x.InnerText)
+                           .ToArray() ?? new string[] { };
 
         private string GetSource(HtmlNode rootNode)
             => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Source:']")?.NextSibling?.InnerText ?? string.Empty;

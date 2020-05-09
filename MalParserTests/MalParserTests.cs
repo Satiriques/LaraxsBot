@@ -1,6 +1,7 @@
 ﻿using MalParser.Models;
 using Newtonsoft.Json;
 using NUnit.Framework;
+using System.Diagnostics;
 using System.IO;
 using System.Threading.Tasks;
 
@@ -12,6 +13,7 @@ namespace MalParser.Tests
         private MalApi _malParser = new MalApi();
 
         [TestCase(1u)]
+        [TestCase(35849u)]
         public async Task GetAnimeAsyncTest(ulong animeId)
         {
             var anime = await _malParser.GetAnimeAsync(animeId);
