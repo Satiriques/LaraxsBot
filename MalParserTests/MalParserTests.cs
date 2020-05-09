@@ -10,7 +10,7 @@ namespace MalParser.Tests
     [TestFixture]
     public class MalParserTests
     {
-        private MalApi _malParser = new MalApi();
+        private readonly MalApi _malParser = new MalApi();
 
         [TestCase(1u)]
         [TestCase(35849u)]

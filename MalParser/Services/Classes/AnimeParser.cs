@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace MalParser.Services.Classes
 {
-    internal class AnimeParser : IAnimeParser
+    public class AnimeParser : IAnimeParser
     {
         private IDownloaderService _downloaderService = new DownloaderService();
         private const string _animeUrlPrefix = "https://myanimelist.net/anime/";
