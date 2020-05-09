@@ -1,5 +1,6 @@
 ﻿using LaraxsBot.Services.Interfaces;
 using Newtonsoft.Json;
+using System;
 using System.IO;
 
 namespace LaraxsBot.Services.Classes
@@ -57,10 +58,19 @@ namespace LaraxsBot.Services.Classes
             Save();
         }
 
+        public void SetDefaultPlayTime(DayOfWeek dayOfweek, TimeSpan timeOfDay)
+        {
+            DefaultPlayDay = dayOfweek;
+            DefaultPlayTime = timeOfDay;
+            Save();
+        }
+
         public ulong VoteChannelId { get; set; }
 
         public ulong StaffRoleId { get; set; }
 
         public string CommandPrefix { get; set; } = "!";
+        public DayOfWeek DefaultPlayDay { get; set; }
+        public TimeSpan DefaultPlayTime { get; set; }
     }
 }

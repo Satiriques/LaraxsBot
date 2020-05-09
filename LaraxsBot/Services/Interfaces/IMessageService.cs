@@ -2,8 +2,6 @@
 using Discord.WebSocket;
 using LaraxsBot.Common;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LaraxsBot.Services.Interfaces
 {
@@ -30,5 +28,7 @@ namespace LaraxsBot.Services.Interfaces
         string GetRoleSet(ulong id);
         string GetRoleGet(ulong voteChannelId);
         string GetHelpInfoModule(SocketSelfUser currentUser);
+        string GetDefaultPlayTimeSet(DayOfWeek dayOfweek, TimeSpan timeOfDay);
+        string GetDefaultPlayTimeGet(DayOfWeek defaultPlayDay, TimeSpan defaultPlayTime);
     }
 }

@@ -26,13 +26,13 @@ namespace LaraxsBot.Services.DatabaseFacade
             _msg = messageService;
         }
 
-        public async Task<IManagerResult> CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
+        public async Task<IManagerResult> CreateNuitAsync(DateTime start, DateTime end, ulong creatorId,
+            DateTime playTime = default)
         {
             var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
-
             if (currentNuit == null)
             {
-                await _nuitContext.CreateNuitAsync(start, end, creatorId);
+                await _nuitContext.CreateNuitAsync(start, end, creatorId, playTime);
             }
             else
             {

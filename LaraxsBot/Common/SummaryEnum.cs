@@ -24,5 +24,7 @@ namespace LaraxsBot.Common
         NuitStaffEdit,
         NuitStaffList,
         InfoModule,
+        ConfigDefaultPlayTimeSet,
+        ConfigDefaultPlayTimeGet,
     }
 }

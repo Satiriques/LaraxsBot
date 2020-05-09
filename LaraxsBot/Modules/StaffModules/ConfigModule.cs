@@ -2,6 +2,7 @@
 using Discord.Commands;
 using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
+using System;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Modules.StaffModules
@@ -58,12 +59,27 @@ namespace LaraxsBot.Modules.StaffModules
             _config.SetPrefix(prefix);
             await ReplyAsync(_msg.GetCommandPrefixSet(prefix));
         }
-        
+
         [SummaryFromEnum(SummaryEnum.ConfigGetCommandPrefix)]
         [Command("commandprefix")]
         public async Task CommandPrefixAsync()
         {
             await ReplyAsync(_msg.GetCommandPrefixGet(_config.CommandPrefix));
+        }
+
+        [SummaryFromEnum(SummaryEnum.ConfigDefaultPlayTimeSet)]
+        [Command("defaultplaytime")]
+        public async Task DefaultPlayTimeAsync(DayOfWeek dayOfweek, DateTime time)
+        {
+            _config.SetDefaultPlayTime(dayOfweek, time.TimeOfDay);
+            await ReplyAsync(_msg.GetDefaultPlayTimeSet(dayOfweek, time.TimeOfDay));
+        }
+
+        [SummaryFromEnum(SummaryEnum.ConfigDefaultPlayTimeGet)]
+        [Command("defaultplaytime")]
+        public async Task DefaultPlayTimeAsync()
+        {
+            await ReplyAsync(_msg.GetDefaultPlayTimeGet(_config.DefaultPlayDay, _config.DefaultPlayTime));
         }
     }
 }

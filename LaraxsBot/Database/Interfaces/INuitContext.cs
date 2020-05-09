@@ -9,7 +9,7 @@ namespace LaraxsBot.Database.Interfaces
 {
     public interface INuitContextManager
     {
-        Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId);
+        Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId, DateTime playTime);
         Task CreateNuitAsync(ulong creatorId);
         Task<List<NuitModel>> GetAllNuitsAsync();
         Task<NuitModel?> GetStillRunningNuitAsync();

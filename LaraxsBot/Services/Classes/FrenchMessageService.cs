@@ -3,8 +3,6 @@ using Discord.WebSocket;
 using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace LaraxsBot.Services.Classes
 {
@@ -30,6 +28,13 @@ namespace LaraxsBot.Services.Classes
 
         public string GetCommandPrefixSet(string prefix)
             => $"Le nouveau préfix est: {prefix}";
+
+        public string GetDefaultPlayTimeGet(DayOfWeek defaultPlayDay, TimeSpan defaultPlayTime)
+            => $"La date de visionnement par défaut est maintenant le {defaultPlayDay.ToFrench()} à {defaultPlayTime}";
+
+        public string GetDefaultPlayTimeSet(DayOfWeek dayOfweek, TimeSpan timeOfDay)
+            => $"La date de visionnement par défaut est maintenant le {dayOfweek.ToFrench()} à {timeOfDay}" +
+            $"";
 
         public string GetHelpInfoCommand(ISelfUser currentUser)
             => $"Écrire @{currentUser} help <commande> pour plus d'information";
@@ -73,13 +78,18 @@ namespace LaraxsBot.Services.Classes
                 SummaryEnum.NuitStaffHelper => "Permet de gérer les nuits avec une commande interactive",
                 SummaryEnum.ConfigModule => "Module qui permet de changer les configuration",
                 SummaryEnum.ConfigSetVoteChannel => "Défine le canal de vote",
-                SummaryEnum.ConfigGetVoteChannel => "Obtient le canal de vote courant",
+                SummaryEnum.ConfigGetVoteChannel => "Affiche le canal de vote courant",
                 SummaryEnum.ConfigSetCommandPrefix => "Défine le préfixe des commandes",
-                SummaryEnum.ConfigGetCommandPrefix => "Obtient le préfixe des commandes",
+                SummaryEnum.ConfigGetCommandPrefix => "Affiche le préfixe des commandes",
                 SummaryEnum.NuitStaffStatus => "Affiche le status de la nuit courante",
                 SummaryEnum.NuitStaffEdit => "Permet d'éditer une nuit",
                 SummaryEnum.NuitStaffList => "Liste toutes les nuits",
                 SummaryEnum.InfoModule => "Commandes pour l'information générale",
+                SummaryEnum.ConfigDefaultPlayTimeSet => "Défine la date de visionnement par défaut\n" + 
+                                                         Format.Italics($"Le jour de semaine peut soit être passé par " +
+                                                         $"string en anglais: i.e. `Saturday` ou par index" +
+                                                         $" (Dimanche = 0, Lundi = 1, Mardi = 2...)"),
+                SummaryEnum.ConfigDefaultPlayTimeGet => "Affiche la date de visionnement par défaut",
                 _ => "N/A",
             };
         }

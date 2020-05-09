@@ -1,6 +1,7 @@
 ﻿using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Database.Models;
+using LaraxsBot.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,13 @@ namespace LaraxsBot.Database.Managers
 {
     public class NuitContextManager : INuitContextManager
     {
+        private readonly IConfig _config;
+
+        public NuitContextManager(IConfig config)
+        {
+            _config = config;
+        }
+
         public void BackupAndDrop()
         {
             using var db = new NuitContext();
@@ -31,9 +39,31 @@ namespace LaraxsBot.Database.Managers
             }
         }
 
-        public async Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId)
+        private DateTime GetNextWeekday(DateTime start, DayOfWeek day)
+        {
+            // The (... + 7) % 7 ensures we end up with a value in the range [0, 6]
+            int daysToAdd = ((int)day - (int)start.DayOfWeek + 7) % 7;
+            return start.AddDays(daysToAdd);
+        }
+
+        public async Task CreateNuitAsync(DateTime start, DateTime end, ulong creatorId, DateTime playTime = default)
         {
             using var db = new NuitContext();
+
+            if(playTime == default)
+            {
+                var now = DateTime.Now;
+
+                if(now.DayOfWeek == _config.DefaultPlayDay && now.TimeOfDay < _config.DefaultPlayTime)
+                {
+                    playTime = new DateTime(now.Year, now.Month, now.Day, _config.DefaultPlayTime.Hours, _config.DefaultPlayTime.Minutes, _config.DefaultPlayTime.Seconds);
+                }
+                else
+                {
+                    playTime = GetNextWeekday(now.AddDays(1), _config.DefaultPlayDay);
+                    playTime = playTime.Add(_config.DefaultPlayTime - playTime.TimeOfDay);
+                }
+            }
 
             var nuit = new NuitModel()
             {
@@ -41,6 +71,7 @@ namespace LaraxsBot.Database.Managers
                 StopTime = end,
                 CreatorId = creatorId,
                 CreationDate = DateTime.Now,
+                PlayTime = playTime
             };
 
             db.Nuits.Add(nuit);
