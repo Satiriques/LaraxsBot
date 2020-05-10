@@ -51,7 +51,7 @@ namespace LaraxsBot
 
         private async Task ReadyAsync()
         {
-            await _client!.SetGameAsync("prefix ;");
+            await _client!.SetGameAsync($"{_config!.CommandPrefix ?? _client.CurrentUser.Mention}help");
 
             var config = _commandHandler!.Services.GetRequiredService<IConfig>();
             var nuitService = _commandHandler.Services.GetRequiredService<INuitInteractiveService>();
