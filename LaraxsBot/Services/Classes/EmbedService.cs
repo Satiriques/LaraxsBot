@@ -157,15 +157,17 @@ namespace LaraxsBot.Services.Classes
 
             var embed = new EmbedBuilder()
             {
-                Description = _messageService.NextNuitTitle,
+                Title = _messageService.NextNuitTitle,
+                Description = animeInfo?.Title ?? $"Anime Id = {nuit.WinnerAnimeId}",
                 Fields = new List<EmbedFieldBuilder>()
                 {
                     new EmbedFieldBuilder()
                     {
-                        Name = animeInfo?.Title ?? $"Anime Id = {nuit.WinnerAnimeId}",
+                        Name = "Lien MAL:",
                         Value = $"https://myanimelist.net/anime/{nuit.WinnerAnimeId}",
                     },
-                }
+                },
+                Color = new Color(0xE3B6EB),
             };
 
             if(animeInfo != null)

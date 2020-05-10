@@ -13,7 +13,6 @@ namespace LaraxsBot.Services.Interfaces
         string NextNuitTitle { get; }
         string NoLastAnimeEndedFound { get; }
         string DateTimeEndMustBeAfterNow { get; }
-
         public string GetInvalidAnimeMessage(ulong id);
         string GetVoteCreatorFooterNote(IGuildUser user);
         string GetSuggestionAlreadyExists(ulong animeId);
