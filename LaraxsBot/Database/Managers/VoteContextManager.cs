@@ -7,6 +7,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
 
 namespace LaraxsBot.Database.Managers
@@ -45,6 +46,7 @@ namespace LaraxsBot.Database.Managers
 
             db.Votes.Add(vote);
             await db.SaveChangesAsync();
+            _logger.Info($"Vote INSERT: N{nuitId} A{animeId} U{userId}");
         }
 
         public async Task DeleteVoteAsync(ulong voteId)
@@ -56,6 +58,7 @@ namespace LaraxsBot.Database.Managers
             {
                 db.Votes.Remove(vote);
                 await db.SaveChangesAsync();
+                _logger.Info($"Vote DELETE: V{voteId}");
             }
         }
 
@@ -64,6 +67,7 @@ namespace LaraxsBot.Database.Managers
             using var db = new VoteContext();
             db.Votes.Remove(model);
             await db.SaveChangesAsync();
+            _logger.Info($"Vote DELETE: N{model.NuitId} A{model.AnimeId} U{model.UserId} V{model.AnimeVoteId}");
         }
 
         public async Task DeleteVotesAsync(IEnumerable<AnimeVoteModel> voteModels)
@@ -71,6 +75,10 @@ namespace LaraxsBot.Database.Managers
             using var db = new VoteContext();
             db.Votes.RemoveRange(voteModels);
             await db.SaveChangesAsync();
+            foreach (var model in voteModels)
+            {
+                _logger.Info($"Vote DELETE: N{model.NuitId} A{model.AnimeId} U{model.UserId} V{model.AnimeVoteId}");
+            }
         }
 
         public async Task<List<AnimeVoteModel>> GetVotesAsync()
