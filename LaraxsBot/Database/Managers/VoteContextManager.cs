@@ -2,6 +2,7 @@
 using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Database.Models;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,6 +13,7 @@ namespace LaraxsBot.Database.Managers
 {
     public class VoteContextManager : IVoteContext
     {
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         public void BackupAndDrop()
         {
             using var db = new VoteContext();

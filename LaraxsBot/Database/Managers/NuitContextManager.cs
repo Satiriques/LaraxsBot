@@ -8,12 +8,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
+using NLog;
 
 namespace LaraxsBot.Database.Managers
 {
     public class NuitContextManager : INuitContextManager
     {
         private readonly IConfig _config;
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
         public NuitContextManager(IConfig config)
         {
