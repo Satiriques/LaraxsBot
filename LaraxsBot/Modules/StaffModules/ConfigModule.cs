@@ -1,5 +1,6 @@
 ﻿using Discord;
 using Discord.Commands;
+using Discord.WebSocket;
 using LaraxsBot.Common;
 using LaraxsBot.Services.Interfaces;
 using System;
@@ -14,12 +15,15 @@ namespace LaraxsBot.Modules.StaffModules
     {
         private readonly IMessageService _msg;
         private readonly IConfig _config;
+        private readonly DiscordSocketClient _client;
 
         public ConfigModule(IMessageService msg,
-            IConfig config)
+            IConfig config,
+            DiscordSocketClient client)
         {
             _msg = msg;
             _config = config;
+            _client = client;
         }
 
         [SummaryFromEnum(SummaryEnum.ConfigSetVoteChannel)]
@@ -58,6 +62,7 @@ namespace LaraxsBot.Modules.StaffModules
         {
             _config.SetPrefix(prefix);
             await ReplyAsync(_msg.GetCommandPrefixSet(prefix));
+            await _client!.SetGameAsync($"{_config!.CommandPrefix ?? _client.CurrentUser.Mention}help");
         }
 
         [SummaryFromEnum(SummaryEnum.ConfigGetCommandPrefix)]
