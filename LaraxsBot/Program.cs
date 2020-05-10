@@ -58,6 +58,7 @@ namespace LaraxsBot
             var embedService = _commandHandler.Services.GetRequiredService<IEmbedService>();
 
             var channel = _client.GetChannel(config.VoteChannelId);
+            nuitService.ClearReactionCallbacks();
 
             if(channel is ITextChannel textChannel)
             {

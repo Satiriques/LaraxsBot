@@ -52,17 +52,7 @@ namespace LaraxsBot.Database.Managers
 
             if(playTime == default)
             {
-                var now = DateTime.Now;
-
-                if(now.DayOfWeek == _config.DefaultPlayDay && now.TimeOfDay < _config.DefaultPlayTime)
-                {
-                    playTime = new DateTime(now.Year, now.Month, now.Day, _config.DefaultPlayTime.Hours, _config.DefaultPlayTime.Minutes, _config.DefaultPlayTime.Seconds);
-                }
-                else
-                {
-                    playTime = GetNextWeekday(now.AddDays(1), _config.DefaultPlayDay);
-                    playTime = playTime.Add(_config.DefaultPlayTime - playTime.TimeOfDay);
-                }
+                playTime = SetDefaultPlayTime();
             }
 
             var nuit = new NuitModel()
@@ -78,14 +68,38 @@ namespace LaraxsBot.Database.Managers
             await db.SaveChangesAsync();
         }
 
-        public async Task CreateNuitAsync(ulong creatorId)
+        private DateTime SetDefaultPlayTime()
+        {
+            DateTime playTime;
+            var now = DateTime.Now;
+
+            if (now.DayOfWeek == _config.DefaultPlayDay && now.TimeOfDay < _config.DefaultPlayTime)
+            {
+                playTime = new DateTime(now.Year, now.Month, now.Day, _config.DefaultPlayTime.Hours, _config.DefaultPlayTime.Minutes, _config.DefaultPlayTime.Seconds);
+            }
+            else
+            {
+                playTime = GetNextWeekday(now.AddDays(1), _config.DefaultPlayDay);
+                playTime = playTime.Add(_config.DefaultPlayTime - playTime.TimeOfDay);
+            }
+
+            return playTime;
+        }
+
+        public async Task CreateNuitAsync(ulong creatorId, DateTime playTime)
         {
             using var db = new NuitContext();
+
+            if (playTime == default)
+            {
+                playTime = SetDefaultPlayTime();
+            }
 
             var nuit = new NuitModel()
             {
                 CreatorId = creatorId,
                 CreationDate = DateTime.Now,
+                PlayTime = playTime,
             };
 
             db.Nuits.Add(nuit);

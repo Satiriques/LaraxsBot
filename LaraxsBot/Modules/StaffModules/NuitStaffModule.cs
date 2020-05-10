@@ -103,9 +103,9 @@ namespace LaraxsBot.Modules.StaffModules
 
         [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
         [Command("create")]
-        public async Task CreateNuitAsync(DateTime start, DateTime end)
+        public async Task CreateNuitAsync(DateTime start, DateTime end, DateTime playTime = default)
         {
-            var result = await _nuitManagerService.CreateNuitAsync(start, end, Context.User.Id);
+            var result = await _nuitManagerService.CreateNuitAsync(start, end, Context.User.Id, playTime);
             if (!result.Success)
             {
                 await ReplyAsync(result.Message);
@@ -118,9 +118,9 @@ namespace LaraxsBot.Modules.StaffModules
 
         [SummaryFromEnum(SummaryEnum.NuitStaffCreate)]
         [Command("create")]
-        public async Task CreateNuitAsync()
+        public async Task CreateNuitAsync(DateTime playTime = default)
         {
-            var result = await _nuitManagerService.CreateNuitAsync(Context.User.Id);
+            var result = await _nuitManagerService.CreateNuitAsync(Context.User.Id, playTime);
             if (!result.Success)
             {
                 await ReplyAsync(result.Message);

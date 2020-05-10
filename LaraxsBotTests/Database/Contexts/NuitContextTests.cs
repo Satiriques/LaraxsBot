@@ -1,5 +1,7 @@
 ﻿using LaraxsBot.Database.Contexts;
 using LaraxsBot.Database.Managers;
+using LaraxsBot.Services.Classes;
+using LaraxsBot.Services.Interfaces;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MoreLinq;
 using NCrunch.Framework;
@@ -16,7 +18,7 @@ namespace LaraxsBot.Database.Contexts.Tests
     [SuppressMessage("Design", "RCS1090:Call 'ConfigureAwait(false)'.", Justification = "<Pending>")]
     public class NuitContextTests
     {
-        private readonly NuitContextManager _context = new NuitContextManager();
+        private readonly NuitContextManager _context = new NuitContextManager(Config.EnsureExists("config.json"));
 
         [TestCleanup]
         public void TestCleanup()
@@ -28,7 +30,7 @@ namespace LaraxsBot.Database.Contexts.Tests
         [TestMethod]
         public void NuitContextTest()
         {
-            var context = new NuitContextManager();
+            var context = new NuitContextManager(Config.EnsureExists("config.json"));
             context.EnsureDeleted();
         }
 

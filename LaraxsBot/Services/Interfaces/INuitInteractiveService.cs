@@ -11,5 +11,6 @@ namespace LaraxsBot.Services.Interfaces
     public interface INuitInteractiveService
     {
         Task<IUserMessage> SetMessageReactionCallback(IUserMessage message, ulong animeId, ICriterion<SocketReaction>? criterion = null);
+        void ClearReactionCallbacks();
     }
 }

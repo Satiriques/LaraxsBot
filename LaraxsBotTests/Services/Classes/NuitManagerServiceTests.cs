@@ -24,7 +24,7 @@ namespace LaraxsBot.Services.Classes.Tests
         [TestInitialize]
         public void TestInitialize()
         {
-            _nuitContext = new NuitContextManager();
+            _nuitContext = new NuitContextManager(Config.EnsureExists("config.json"));
             _voteContext = new VoteContextManager();
             _service = new NuitService(_nuitContext, new FrenchMessageService());
         }
@@ -39,14 +39,14 @@ namespace LaraxsBot.Services.Classes.Tests
         [TestMethod]
         public async Task CreateNuitAsyncTest()
         {
-            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0);
-            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0);
+            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0, default);
+            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0, default);
 
             var count = await _service.GetNumberOfNuitAsync();
             Assert.AreEqual(2, count);
 
             await _service.StopNuitAsync(0);
-            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0);
+            await _service.CreateNuitAsync(DateTime.Now, DateTime.Now + TimeSpan.FromDays(7), 0, default);
 
             count = await _service.GetNumberOfNuitAsync();
 
