@@ -84,7 +84,7 @@ namespace LaraxsBot
             int argPos = 0;
 
             // Determine if the message is a command based on the prefix and make sure no bots trigger commands
-            if (!(message.HasStringPrefix(_config.CommandPrefix, ref argPos) ||
+            if (!((!string.IsNullOrWhiteSpace(_config.CommandPrefix) && message.HasStringPrefix(_config.CommandPrefix, ref argPos)) ||
                 message.HasMentionPrefix(_client.CurrentUser, ref argPos) ||
                 _magicRegex.IsMatch(message.Content)) ||
                 message.Author.IsBot)
