@@ -4,6 +4,7 @@ using Discord.WebSocket;
 using LaraxsBot.Services.Classes;
 using LaraxsBot.Services.Interfaces;
 using Microsoft.Extensions.DependencyInjection;
+using NLog;
 using System;
 using System.Linq;
 using System.Security.Cryptography.X509Certificates;
@@ -14,6 +15,7 @@ namespace LaraxsBot
 {
     class Program
     {
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         private DiscordSocketClient? _client;
         private CommandService? _commandService;
         private IConfig? _config;
@@ -81,7 +83,28 @@ namespace LaraxsBot
 
         private Task Log(LogMessage arg)
         {
-            Console.WriteLine(arg.ToString());
+            switch (arg.Severity)
+            {
+                case LogSeverity.Critical:
+                    _logger.Fatal(arg.ToString());
+                    break;
+                case LogSeverity.Error:
+                    _logger.Error(arg.ToString());
+                    break;
+                case LogSeverity.Warning:
+                    _logger.Warn(arg.ToString());
+                    break;
+                case LogSeverity.Info:
+                    _logger.Info(arg.ToString());
+                    break;
+                case LogSeverity.Verbose:
+                    _logger.Trace(arg.ToString());
+                    break;
+                case LogSeverity.Debug:
+                    _logger.Debug(arg.ToString());
+                    break;
+            }
+           
             return Task.CompletedTask;
         }
     }

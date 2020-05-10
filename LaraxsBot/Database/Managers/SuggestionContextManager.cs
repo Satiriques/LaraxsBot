@@ -3,6 +3,7 @@ using LaraxsBot.Database.Interfaces;
 using LaraxsBot.Database.Models;
 using LaraxsBot.Interfaces;
 using Microsoft.EntityFrameworkCore;
+using NLog;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,6 +14,7 @@ namespace LaraxsBot.Database.Managers
 {
     public class SuggestionContextManager : ISuggestionContext
     {
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
         public void BackupAndDrop()
         {
             using var db = new SuggestionContext();
@@ -43,6 +45,7 @@ namespace LaraxsBot.Database.Managers
 
             db.Suggestions.Add(suggestion);
             await db.SaveChangesAsync();
+            _logger.Info($"Suggestion INSERT: N{nuitId} A{animeId}");
         }
 
         public async Task DeleteSuggestionAsync(ulong suggestionId)
@@ -54,6 +57,7 @@ namespace LaraxsBot.Database.Managers
             {
                 db.Suggestions.Remove(suggestion);
                 await db.SaveChangesAsync();
+                _logger.Info($"Suggestion DELETE: N{suggestion.NuitId} A{suggestion.AnimeId}");
             }
         }
 

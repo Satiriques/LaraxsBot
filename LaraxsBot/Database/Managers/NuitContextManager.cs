@@ -68,6 +68,7 @@ namespace LaraxsBot.Database.Managers
 
             db.Nuits.Add(nuit);
             await db.SaveChangesAsync();
+            _logger.Info($"Nuit INSERT by {creatorId}");
         }
 
         private DateTime SetDefaultPlayTime()
@@ -106,6 +107,7 @@ namespace LaraxsBot.Database.Managers
 
             db.Nuits.Add(nuit);
             await db.SaveChangesAsync();
+            _logger.Info($"Nuit INSERT by {creatorId}");
         }
 
         public Task<bool> DoesNuitExistsAsync(ulong id)
@@ -145,10 +147,12 @@ namespace LaraxsBot.Database.Managers
             if(nuit != null)
             {
                 db.Nuits.Remove(nuit);
+                _logger.Info($"Nuit DELETE N{nuit.NuitId}");
             }
 
             await db.Nuits.AddAsync(model);
             await db.SaveChangesAsync();
+            _logger.Info($"Nuit INSERT by {model.NuitId}");
         }
 
         public async Task<NuitModel?> GetStillRunningNuitAsync()
