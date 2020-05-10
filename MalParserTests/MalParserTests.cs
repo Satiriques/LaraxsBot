@@ -14,6 +14,7 @@ namespace MalParser.Tests
 
         [TestCase(1u)]
         [TestCase(35849u)]
+        [TestCase(1439u)]
         public async Task GetAnimeAsyncTest(ulong animeId)
         {
             var anime = await _malParser.GetAnimeAsync(animeId);

@@ -9,7 +9,6 @@ namespace LaraxsBot.Services.Interfaces
 {
     public interface IVoteService
     {
-        Task<IManagerResult> VoteAsync(ulong animeId);
         Task<IManagerResult> ProposeAsync(ulong animeId, IGuildUser user);
     }
 }

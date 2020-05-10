@@ -60,7 +60,9 @@ namespace MalParser.Services.Classes
                            .ToArray() ?? new string[] { };
 
         private string[] GetLicensors(HtmlNode rootNode)
-            => rootNode.SelectSingleNode("//span[@class='dark_text' and text() = 'Licensors:']")?.NextSibling?.NextSibling?.InnerText?.Split(",") ?? new string[] { };
+            => rootNode.SelectNodes("//span[@class='dark_text' and text() = 'Licensors:']/../a")
+                           .Select(x => x.InnerText)
+                           .ToArray() ?? new string[] { };
 
         private string[] GetStudios(HtmlNode rootNode)
             => rootNode.SelectNodes("//span[@class='dark_text' and text() = 'Studios:']/../a")

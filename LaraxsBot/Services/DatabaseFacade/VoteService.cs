@@ -89,15 +89,5 @@ namespace LaraxsBot.Services.DatabaseFacade
 
             return ManagerResult.Default;
         }
-
-        public Task<IManagerResult> VoteAsync(ulong animeId)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task<IManagerResult> VoteExistsAsync(string animeName)
-        {
-            throw new NotImplementedException();
-        }
     }
 }
