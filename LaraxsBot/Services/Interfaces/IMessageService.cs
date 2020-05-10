@@ -12,6 +12,7 @@ namespace LaraxsBot.Services.Interfaces
         string StaffOnlyCommand { get; }
         string NextNuitTitle { get; }
         string NoLastAnimeEndedFound { get; }
+        string DateTimeEndMustBeAfterNow { get; }
 
         public string GetInvalidAnimeMessage(ulong id);
         string GetVoteCreatorFooterNote(IGuildUser user);

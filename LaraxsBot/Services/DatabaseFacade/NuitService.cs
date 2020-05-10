@@ -29,6 +29,11 @@ namespace LaraxsBot.Services.DatabaseFacade
         public async Task<IManagerResult> CreateNuitAsync(DateTime start, DateTime end, ulong creatorId,
             DateTime playTime = default)
         {
+            if(end < DateTime.Now)
+            {
+                return ManagerResult.FromErrorMessage(_msg.DateTimeEndMustBeAfterNow);
+            }
+
             var currentNuit = await _nuitContext.GetStillRunningNuitAsync();
             if (currentNuit == null)
             {

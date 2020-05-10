@@ -23,6 +23,9 @@ namespace LaraxsBot.Services.Classes
         public string NoLastAnimeEndedFound
             => "Aucune ancienne nuit terminé trouvé.";
 
+        public string DateTimeEndMustBeAfterNow
+            => "Le temps de fin doit être dans le futur";
+
         public string GetCommandPrefixGet(string commandPrefix)
             => $"Le préfix de commande est: {commandPrefix}";
 
