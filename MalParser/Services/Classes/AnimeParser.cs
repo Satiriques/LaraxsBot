@@ -43,7 +43,7 @@ namespace MalParser.Services.Classes
             => rootNode.SelectSingleNode("//div/div/a/img[@itemprop='image']")?.Attributes["data-src"].Value ?? string.Empty;
 
         private string GetTitle(HtmlNode rootNode)
-            => rootNode.SelectSingleNode("//span[@itemprop='name']")?.InnerText ?? string.Empty;
+            => rootNode.SelectSingleNode("//span[@itemprop='name']/text()").InnerText ?? string.Empty;
 
         private string GetSynopsis(HtmlNode rootNode)
             => rootNode.SelectSingleNode("//span[@itemprop='description']")?.InnerText ?? string.Empty;
